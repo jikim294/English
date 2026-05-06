@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캐나다 생존 영어 스크립트</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #181818;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --text: #f0ede8;
+    --text-sub: #888;
+    --text-muted: #555;
+    --accent: #c8f080;
+    --accent-dim: #8aab45;
+    --tag: #2a2a2a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  header {
+    padding: 2rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  h1 span {
+    color: var(--text-sub);
+    font-weight: 400;
+  }
+
+  .tabs-wrap {
+    padding: 1rem 1.25rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    width: max-content;
+  }
+
+  .tab {
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: 'Pretendard', sans-serif;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab:hover:not(.active) {
+    color: var(--text-sub);
+  }
+
+  main {
+    padding: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  .section-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 1rem;
+    padding: 8px 12px;
+    background: var(--surface);
+    border-radius: 8px;
+    border-left: 2px solid var(--accent-dim);
+    line-height: 1.5;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.125rem;
+    margin-bottom: 10px;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+
+  .card:active {
+    border-color: var(--border);
+    background: var(--surface2);
+  }
+
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .en {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .ko {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.55;
+  }
+
+  .tip {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--accent-dim);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.5;
+  }
+
+  .tip::before {
+    content: '→ ';
+    color: var(--accent);
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--tag);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  .copy-btn.copied {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  .progress-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .progress-bar-bg {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.3s ease;
+  }
+
+  .memo-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .memo-btn:active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .card.memorized {
+    opacity: 0.45;
+    border-style: dashed;
+  }
+
+  .card.memorized .en {
+    text-decoration: line-through;
+    text-decoration-color: var(--text-muted);
+  }
+
+  .memorized-badge {
+    display: none;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    margin-left: 6px;
+  }
+
+  .card.memorized .memorized-badge {
+    display: inline;
+  }
+
+  body { padding-bottom: 60px; }
+
+  @media (min-width: 600px) {
+    header { padding: 2.5rem 2rem 1.25rem; }
+    .tabs-wrap { padding: 0 2rem; }
+    main { padding: 1.5rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">CANADA SURVIVAL ENGLISH</div>
+  <h1>캐나다 생존 영어 <span>/ 상황별 스크립트</span></h1>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<main id="main"></main>
+
+<div class="progress-wrap">
+  <span class="progress-label" id="progress-label">0 / 0 외움</span>
+  <div class="progress-bar-bg">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+  <button class="memo-btn" id="reset-btn" onclick="resetAll()">초기화</button>
+</div>
+
+<script>
+const data = [
+  {
+    id: "survive",
+    label: "😅 못 알아들을 때",
+    note: "제일 먼저 외워. 이것만 있어도 안 얼어붙어.",
+    items: [
+      { en: "Sorry, could you say that again?", ko: "다시 한번 말씀해 주시겠어요?", tip: "가장 기본. 무조건 외우기" },
+      { en: "Could you speak a little slower, please?", ko: "조금 천천히 말씀해 주시겠어요?", tip: "" },
+      { en: "Sorry, how do you spell that?", ko: "그거 철자가 어떻게 돼요?", tip: "이름, 주소 받아 적을 때 유용" },
+      { en: "Just to confirm, you mean...?", ko: "확인하자면, ...말씀이시죠?", tip: "내가 이해한 게 맞는지 확인할 때" },
+      { en: "Sorry, I didn't quite catch that — could you repeat it?", ko: "잘 못 들었어요, 다시 한번 말씀해 주실 수 있어요?", tip: "catch = 알아듣다 (구어체)" }
+    ]
+  },
+  {
+    id: "house",
+    label: "🏠 집 구하기",
+    note: "쉐어하우스 문의할 때 바로 쓸 수 있는 문장들.",
+    items: [
+      { en: "Hi, I'm calling about the room you posted online. Is it still available?", ko: "안녕하세요, 온라인에 올리신 방 관련해서 연락드려요. 아직 있나요?", tip: "첫 연락 문자/전화 모두 OK" },
+      { en: "How much is the rent per month, and what's included?", ko: "월세가 얼마예요, 그리고 뭐가 포함돼 있어요?", tip: "인터넷, 공과금 포함 여부 꼭 확인" },
+      { en: "Is there a minimum stay requirement?", ko: "최소 거주 기간이 있나요?", tip: "" },
+      { en: "Would it be possible to view the room this week?", ko: "이번 주에 방을 볼 수 있을까요?", tip: "방문 요청할 때" },
+      { en: "Is the deposit refundable at the end of the lease?", ko: "계약 끝나면 보증금 돌려받을 수 있나요?", tip: "deposit = 보증금, 꼭 확인해야 하는 것" }
+    ]
+  },
+  {
+    id: "cafe",
+    label: "☕ 카페 / 식당",
+    note: "일상에서 제일 자주 쓰는 것들.",
+    items: [
+      { en: "Can I get a medium latte, please?", ko: "미디엄 라떼 한 잔 주세요.", tip: "order 말고 get 쓰는 게 더 자연스러워" },
+      { en: "For here or to go? — For here, please. / To go, please.", ko: "여기서 드세요, 포장이에요? — 여기서요 / 포장이요.", tip: "점원이 자주 물어보는 말" },
+      { en: "Could I have that with oat milk instead?", ko: "오트 밀크로 바꿔주실 수 있어요?", tip: "instead 붙이면 변경 요청" },
+      { en: "Do you have any specials today?", ko: "오늘 특별 메뉴 있어요?", tip: "" },
+      { en: "Could I get the bill, please?", ko: "계산서 주세요.", tip: "check도 같은 뜻. Can I get the check?" }
+    ]
+  },
+  {
+    id: "job",
+    label: "💼 잡 인터뷰",
+    note: "서버, 카페 알바 면접에서 자주 나오는 것들.",
+    items: [
+      { en: "I have experience working in a fast-paced environment.", ko: "빠르게 돌아가는 환경에서 일한 경험이 있어요.", tip: "서비스직 면접에서 거의 무조건 나옴" },
+      { en: "I'm available on weekends and evenings — I'm pretty flexible.", ko: "주말이랑 저녁 가능해요 — 시간 조율 잘 돼요.", tip: "스케줄 물어볼 때" },
+      { en: "I'm a quick learner and I'm comfortable working with a team.", ko: "배우는 속도가 빠르고 팀으로 일하는 거 편해요.", tip: "자기소개 단골 문장" },
+      { en: "When would you need someone to start?", ko: "언제부터 일할 사람이 필요하세요?", tip: "면접 마무리에 써도 센스 있어 보여" },
+      { en: "Is there anything else you'd like to know about me?", ko: "저에 대해 더 궁금한 거 있으세요?", tip: "면접 끝날 때 이걸로 마무리" }
+    ]
+  },
+  {
+    id: "hospital",
+    label: "🏥 병원 / 약국",
+    note: "아플 때 당황하지 않으려면 미리 외워둬.",
+    items: [
+      { en: "I'd like to make an appointment with a doctor, please.", ko: "의사 선생님 진료 예약하고 싶어요.", tip: "캐나다는 walk-in clinic도 많아" },
+      { en: "I've had this pain for about a week now.", ko: "이 통증이 한 일주일 됐어요.", tip: "증상 설명 기본 틀" },
+      { en: "It hurts when I press here / when I walk.", ko: "여기를 누르면 / 걸을 때 아파요.", tip: "부위 가리키며 말하면 OK" },
+      { en: "Do I need a prescription for this?", ko: "이거 처방전 필요한가요?", tip: "약국에서 약 살 때" },
+      { en: "I'm allergic to penicillin.", ko: "저 페니실린 알레르기 있어요.", tip: "본인 알레르기로 바꿔서 외워두기" }
+    ]
+  },
+  {
+    id: "bank",
+    label: "🏦 은행",
+    note: "계좌 개설 + 기본 거래.",
+    items: [
+      { en: "I'd like to open a bank account, please.", ko: "계좌 개설하고 싶어요.", tip: "워홀 초반에 제일 먼저 할 일" },
+      { en: "What documents do I need to bring?", ko: "어떤 서류 가져와야 하나요?", tip: "" },
+      { en: "I'd like to deposit this, please.", ko: "이거 입금하고 싶어요.", tip: "deposit = 입금, withdraw = 출금" },
+      { en: "Could I get a bank statement for the last three months?", ko: "최근 3개월 거래 내역서 뽑아주실 수 있어요?", tip: "비자 연장 등에 필요할 수 있어" },
+      { en: "I think there's an error on my account.", ko: "제 계좌에 오류가 있는 것 같아요.", tip: "" }
+    ]
+  },
+  {
+    id: "mart",
+    label: "🛒 마트 / 쇼핑",
+    note: "일상에서 생각보다 많이 쓰는 것들.",
+    items: [
+      { en: "Excuse me, where can I find the dairy section?", ko: "실례합니다, 유제품 코너가 어디예요?", tip: "section 대신 aisle도 자주 씀" },
+      { en: "Do you have this in a different size?", ko: "이거 다른 사이즈 있나요?", tip: "옷, 신발 살 때" },
+      { en: "Can I return this if it doesn't fit?", ko: "사이즈 안 맞으면 반품 되나요?", tip: "캐나다는 반품 정책 관대한 편" },
+      { en: "Do you have a loyalty card / points card?", ko: "포인트 카드 있으세요?", tip: "계산할 때 점원이 자주 물어봄" },
+      { en: "Could I get a bag, please?", ko: "봉투 하나 주시겠어요?", tip: "캐나다 마트는 봉투 유료인 경우 많음" }
+    ]
+  },
+  {
+    id: "small",
+    label: "💬 스몰토크",
+    note: "친해지는 데 진짜 중요해. 어학원 첫 날부터 써먹어.",
+    items: [
+      { en: "How long have you been in Vancouver?", ko: "밴쿠버 온 지 얼마나 됐어요?", tip: "어학원에서 제일 흔한 첫 질문" },
+      { en: "What do you do for fun around here?", ko: "여기서 주로 뭐 하면서 놀아요?", tip: "현지인에게 물어보면 맛집·명소 정보 득템" },
+      { en: "I'm still getting used to the weather here.", ko: "여기 날씨에 아직 적응 중이에요.", tip: "날씨는 만국 공통 스몰토크 주제" },
+      { en: "That sounds like a lot of fun — I'd love to try that sometime.", ko: "재밌겠다 — 나도 언제 한번 해보고 싶다.", tip: "상대방 얘기에 반응할 때" },
+      { en: "Honestly, I'm still figuring things out here, but loving it so far.", ko: "솔직히 아직 적응 중인데, 지금까지는 좋아요.", tip: "새로 왔을 때 쓰기 딱 좋은 문장" }
+    ]
+  }
+];
+
+let memorized = JSON.parse(localStorage.getItem('memorized') || '{}');
+let currentSection = data[0].id;
+
+function saveMemorized() {
+  localStorage.setItem('memorized', JSON.stringify(memorized));
+}
+
+function getKey(secId, idx) {
+  return secId + '_' + idx;
+}
+
+function updateProgress() {
+  const total = data.reduce((acc, s) => acc + s.items.length, 0);
+  const done = Object.values(memorized).filter(Boolean).length;
+  document.getElementById('progress-label').textContent = done + ' / ' + total + ' 외움';
+  document.getElementById('progress-bar').style.width = (done / total * 100) + '%';
+}
+
+function toggleMemorized(secId, idx) {
+  const key = getKey(secId, idx);
+  memorized[key] = !memorized[key];
+  saveMemorized();
+  const card = document.getElementById('card-' + key);
+  if (memorized[key]) {
+    card.classList.add('memorized');
+    card.querySelector('.memo-btn-card').textContent = '✓ 외움';
+  } else {
+    card.classList.remove('memorized');
+    card.querySelector('.memo-btn-card').textContent = '외웠어';
+  }
+  updateProgress();
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '복사됨';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '복사';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+function resetAll() {
+  if (confirm('외운 목록을 전부 초기화할까요?')) {
+    memorized = {};
+    saveMemorized();
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('memorized'));
+    document.querySelectorAll('.memo-btn-card').forEach(b => b.textContent = '외웠어');
+    updateProgress();
+  }
+}
+
+function switchTab(id) {
+  currentSection = id;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.id === id);
+  });
+  document.querySelectorAll('.section').forEach(s => {
+    s.classList.toggle('visible', s.id === 'sec-' + id);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const tabsEl = document.getElementById('tabs');
+const mainEl = document.getElementById('main');
+
+data.forEach((sec, si) => {
+  const tab = document.createElement('button');
+  tab.className = 'tab' + (si === 0 ? ' active' : '');
+  tab.dataset.id = sec.id;
+  tab.textContent = sec.label;
+  tab.onclick = () => switchTab(sec.id);
+  tabsEl.appendChild(tab);
+
+  const section = document.createElement('div');
+  section.className = 'section' + (si === 0 ? ' visible' : '');
+  section.id = 'sec-' + sec.id;
+
+  const note = document.createElement('div');
+  note.className = 'section-note';
+  note.textContent = sec.note;
+  section.appendChild(note);
+
+  sec.items.forEach((item, idx) => {
+    const key = getKey(sec.id, idx);
+    const isMemo = !!memorized[key];
+
+    const card = document.createElement('div');
+    card.className = 'card' + (isMemo ? ' memorized' : '');
+    card.id = 'card-' + key;
+
+    card.innerHTML = `
+      <div class="card-num">${String(idx + 1).padStart(2, '0')} / ${String(sec.items.length).padStart(2, '0')}</div>
+      <button class="copy-btn" onclick="copyText('${item.en.replace(/'/g, "\\'")}', this)">복사</button>
+      <div class="en">${item.en}</div>
+      <div class="ko">${item.ko}</div>
+      ${item.tip ? `<div class="tip">${item.tip}</div>` : ''}
+      <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+        <button class="memo-btn memo-btn-card" onclick="toggleMemorized('${sec.id}', ${idx})">${isMemo ? '✓ 외움' : '외웠어'}</button>
+      </div>
+    `;
+
+    section.appendChild(card);
+  });
+
+  mainEl.appendChild(section);
+});
+
+updateProgress();
+</script>
+</body>
+</html>
