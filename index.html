@@ -583,7 +583,7 @@
   }
 
   /* =========================================
-     인트로(티켓) 페이지 스타일 (애니메이션/원형 디자인 수정)
+     [NEW] 감성 타이포그래피 인트로 페이지 스타일
      ========================================= */
   #intro-page {
     position: fixed;
@@ -594,102 +594,65 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
-    /* 슬라이드 업 대신 부드러운 투명도(페이드아웃) 애니메이션으로 교체 */
-    transition: opacity 0.8s ease; 
+    cursor: pointer;
+    overflow: hidden;
+    /* 물 흐르듯 자연스러운 페이드아웃 애니메이션 */
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
   }
 
   #intro-page.hidden {
-    /* 부드럽게 사라지게 하고 클릭 방지 */
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
   }
 
-  .intro-eyebrow {
+  /* 배경에 깔리는 거대한 투명 글씨 */
+  .intro-bg-text {
+    position: absolute;
+    font-family: 'DM Mono', monospace;
+    font-size: 30vw;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.02);
+    z-index: 1;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+    white-space: nowrap;
+  }
+
+  /* 메인 타이포그래피 */
+  .intro-typo {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.1;
+    text-align: center;
+    letter-spacing: -0.03em;
+    z-index: 2;
+    /* 그림자와 위치가 마우스를 따라 부드럽게 변함 */
+    transition: text-shadow 0.1s ease-out, transform 0.1s ease-out;
+  }
+
+  .intro-sub {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.2em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 3rem;
-  }
-
-  .ticket-container {
-    perspective: 1000px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    width: 100%;
-    max-width: 340px;
-  }
-
-  .ticket {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    cursor: pointer;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.1s ease-out, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .ticket:hover {
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  }
-
-  /* 티켓 원 모양 삭제함 (가운데 점선만 남겨서 깔끔하게 유지) */
-  .ticket-line {
-    position: absolute;
-    right: 89px;
-    top: 0;
-    bottom: 0;
-    border-right: 1px dashed var(--border-light);
-  }
-
-  .ticket-day {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
     color: var(--accent);
-    letter-spacing: 0.1em;
     text-transform: uppercase;
+    margin-top: 4rem;
+    z-index: 2;
+    animation: pulse 2.5s infinite;
   }
 
-  .ticket-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1.4;
-    word-break: keep-all;
-    color: var(--text);
-  }
-
-  .ticket-title em {
-    display: block;
-    font-style: normal;
-    font-size: 13px;
-    color: var(--text-sub);
-    font-family: 'Gowun Dodum', sans-serif;
-    margin-top: 4px;
-  }
-
-  .ticket-footer {
-    margin-top: 8px;
-    display: flex;
-    justify-content: space-between;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
   }
 
   #main-ui {
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.8s ease;
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
   #main-ui.visible {
     opacity: 1;
@@ -699,9 +662,10 @@
 </head>
 <body>
 
-<div id="intro-page">
-  <div class="intro-eyebrow">Select Your Journey</div>
-  <div class="ticket-container" id="ticket-list"></div>
+<div id="intro-page" onclick="startApp('25')">
+  <div class="intro-bg-text" id="bg-text">EBS</div>
+  <h1 class="intro-typo" id="main-typo">EBS<br>Audio<br>Series.</h1>
+  <p class="intro-sub">Tap Anywhere to Start</p>
 </div>
 
 <div id="main-ui">
@@ -745,10 +709,10 @@
 </div>
 
 <script>
-// ── DATA: 기존 데이터 보존, date 속성만 추가 ──
+// ── DATA: 기존 데이터 100% 원본 그대로 유지 ──
 const appData = {
   25: {
-    date: "2026.05.07", // 티켓 우측 하단에 표시될 날짜 추가!
+    date: "2026.05.07",
     titleEn: "Depends on my mood.",
     titleKo: "그때그때 기분에 따라 달라요",
     pointEn: "Depends on my mood.",
@@ -778,7 +742,7 @@ const appData = {
     ]
   },
   23: {
-    date: "2026.05.05", // 날짜 추가!
+    date: "2026.05.05",
     titleEn: "The spicy ones.",
     titleKo: "매운 거.",
     pointEn: "The spicy ones.",
@@ -812,58 +776,44 @@ let currentDay = '25';
 let quizItems = [];
 
 // =========================================
-// 날짜 출력 적용 및 페이드아웃 효과 호출
+// [NEW] 감성 타이포그래피 마우스 인터랙션
 // =========================================
-function initIntro() {
-  const container = document.getElementById('ticket-list');
-  container.innerHTML = '';
+const introPage = document.getElementById('intro-page');
+const typo = document.getElementById('main-typo');
+const bgText = document.getElementById('bg-text');
 
-  Object.keys(appData).reverse().forEach(day => {
-    const data = appData[day];
-    const ticket = document.createElement('div');
-    ticket.className = 'ticket';
-    ticket.innerHTML = `
-      <div class="ticket-line"></div>
-      <div class="ticket-day">Day ${day}</div>
-      <div class="ticket-title">${data.titleEn} <em>${data.titleKo}</em></div>
-      <div class="ticket-footer">
-        <span>Audio Series</span>
-        <span>${data.date}</span> </div>
-    `;
+// PC 환경: 마우스를 움직이면 글씨와 그림자가 미세하게 움직임
+introPage.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth) - 0.5;
+  const y = (e.clientY / window.innerHeight) - 0.5;
+  
+  // 메인 글씨는 살짝 밀리고, 포인트 컬러(블루) 그림자가 생김
+  typo.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
+  typo.style.textShadow = `${x * 40}px ${y * 40}px 30px rgba(0, 51, 255, 0.3)`;
+  
+  // 배경 투명 글씨는 반대 방향으로 조금 더 크게 움직임
+  bgText.style.transform = `translate(${x * 50}px, ${y * 50}px)`;
+});
 
-    ticket.addEventListener('mousemove', (e) => {
-      const rect = ticket.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const rotateX = ((y / rect.height) - 0.5) * -15;
-      const rotateY = ((x / rect.width) - 0.5) * 15;
-      ticket.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-    });
+// 마우스가 화면을 벗어나면 제자리로 복귀
+introPage.addEventListener('mouseleave', () => {
+  typo.style.transform = `translate(0, 0)`;
+  typo.style.textShadow = `none`;
+  bgText.style.transform = `translate(0, 0)`;
+});
 
-    ticket.addEventListener('mouseleave', () => {
-      ticket.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
-    });
-
-    ticket.addEventListener('click', () => {
-      startApp(day);
-    });
-
-    container.appendChild(ticket);
-  });
-}
-
+// 화면 탭 시 메인 앱 실행 (부드러운 페이드아웃)
 function startApp(day) {
   const intro = document.getElementById('intro-page');
   const main = document.getElementById('main-ui');
   
   loadDay(day);
   
-  // 클릭 시 페이드아웃 발동
   intro.classList.add('hidden');
   main.classList.add('visible');
 }
 
-// ── RENDER ENGINE ──────────────────────
+// ── RENDER ENGINE (기존 로직 원본 그대로 유지) ──────────────────────
 function loadDay(day) {
   currentDay = day;
   const data = appData[day];
@@ -1120,8 +1070,6 @@ function updateBottom(pct) {
     fill.style.width = '0%';
   }
 }
-
-initIntro();
 </script>
 </body>
 </html>
