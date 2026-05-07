@@ -619,17 +619,17 @@
     white-space: nowrap;
   }
 
-  /* 메인 타이포그래피 */
+  /* 메인 타이포그래피: 한 줄로 나오도록 수정됨 */
   .intro-typo {
     font-family: 'DM Mono', monospace;
-    font-size: clamp(3rem, 10vw, 6rem);
+    font-size: clamp(1.5rem, 7vw, 4.5rem); /* 모바일에서도 한 줄에 맞게 폰트 크기 조정 */
     font-weight: 300;
     color: var(--text);
     line-height: 1.1;
     text-align: center;
     letter-spacing: -0.03em;
+    white-space: nowrap; /* 줄바꿈 금지 */
     z-index: 2;
-    /* 그림자와 위치가 마우스를 따라 부드럽게 변함 */
     transition: text-shadow 0.1s ease-out, transform 0.1s ease-out;
   }
 
@@ -664,8 +664,7 @@
 
 <div id="intro-page" onclick="startApp('25')">
   <div class="intro-bg-text" id="bg-text">EBS</div>
-  <h1 class="intro-typo" id="main-typo">EBS<br>Audio<br>Series.</h1>
-  <p class="intro-sub">Tap Anywhere to Start</p>
+  <h1 class="intro-typo" id="main-typo">EBS Audio Series.</h1> <p class="intro-sub">Tap Anywhere to Start</p>
 </div>
 
 <div id="main-ui">
@@ -776,7 +775,7 @@ let currentDay = '25';
 let quizItems = [];
 
 // =========================================
-// [NEW] 감성 타이포그래피 마우스 인터랙션
+// 감성 타이포그래피 마우스 인터랙션
 // =========================================
 const introPage = document.getElementById('intro-page');
 const typo = document.getElementById('main-typo');
