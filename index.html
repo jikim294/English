@@ -590,7 +590,7 @@
   }
 
   /* =========================================
-     [NEW] 시네마틱 스플래시 인트로 (타이핑 & 줌인)
+     [NEW] 시네마틱 스플래시 인트로 (타이핑 & 페이드아웃)
      ========================================= */
   #intro-page {
     position: fixed;
@@ -601,7 +601,8 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: opacity 0.8s ease, visibility 0.8s;
+    /* 화면이 사라지는 로직: opacity와 visibility만 제어 */
+    transition: opacity 0.8s ease, visibility 0.8s ease;
   }
 
   #intro-page.hidden {
@@ -612,14 +613,6 @@
 
   .typing-container {
     display: inline-block;
-    transform-origin: center center;
-    /* 줌아웃(화면 뚫고 나가는) 효과 트랜지션 */
-    transition: transform 1s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.8s ease-in;
-  }
-
-  .typing-container.zoom-out {
-    transform: scale(40); /* 렌즈 안으로 빨려 들어가는 효과 */
-    opacity: 0;
   }
 
   .typing-text {
@@ -632,7 +625,7 @@
     overflow: hidden;
     border-right: 2px solid var(--text); /* 깜빡이는 커서 효과 */
     width: 0;
-    /* 1.5초 동안 글자가 좌에서 우로 쳐지고, 커서는 계속 깜빡임 */
+    /* 1.5초 동안 글자가 좌에서 우로 작성됨 */
     animation: typing 1.5s steps(30, end) forwards, blink 0.75s step-end infinite;
   }
 
@@ -650,7 +643,7 @@
   #main-ui {
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1.2s ease-out;
+    transition: opacity 1.0s ease-out;
   }
 
   #main-ui.visible {
@@ -708,7 +701,7 @@
 </div>
 
 <script>
-// ── DATA: 기존 데이터 100% 원본 그대로 유지 (Day 25, 23 모두 복구) ──
+// ── DATA: 기존 데이터 100% 원본 그대로 유지 (Day 25, 23 모두 유지) ──
 const appData = {
   25: {
     date: "2026.05.07",
@@ -779,24 +772,14 @@ window.addEventListener('DOMContentLoaded', () => {
   // 처음에 메인 앱 데이터(Day 25)를 미리 뒤에 그려놓음
   loadDay('25');
 
-  // 1. 타이핑 애니메이션(1.5초)이 끝난 후 잠시 여운을 주고(1초 대기) 줌인 효과 시작
+  // 타이핑(1.5초) + 아주 짧은 여운(0.3초) = 총 1.8초(1800ms) 대기 후 화면 페이드아웃
   setTimeout(() => {
-    const typingContainer = document.querySelector('.typing-container');
-    if (typingContainer) {
-      typingContainer.classList.add('zoom-out');
-    }
-    
-    // 2. 줌인 애니메이션 진행 도중 메인 화면 페이드인 처리
-    setTimeout(() => {
-      document.getElementById('intro-page').classList.add('hidden');
-      document.getElementById('main-ui').classList.add('visible');
-    }, 500); // 줌인 시작 0.5초 뒤 전환
-    
-  }, 2500); // 총 2.5초 대기 후 애니메이션 발동
+    document.getElementById('intro-page').classList.add('hidden');
+    document.getElementById('main-ui').classList.add('visible');
+  }, 1800); 
 });
 
-
-// ── RENDER ENGINE (기존 로직 원본: 해석 토글 분리, 이벤트 버블링 방지 완벽 복구) ──
+// ── RENDER ENGINE (기존 로직 원본: 해석 토글 분리, 이벤트 버블링 방지 완벽 유지) ──
 function loadDay(day) {
   currentDay = day;
   const data = appData[day];
