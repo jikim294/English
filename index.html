@@ -133,13 +133,11 @@
   .section { display: none; }
   .section.visible { display: block; }
 
-  /* ── UI 수정 포인트: 한글 해석 기본 숨김 ── */
   .ko-line, .keypoint-ko { 
     display: none; 
     transition: all 0.2s;
   }
 
-  /* .show-ko 클래스가 추가되었을 때만 노출 */
   .dialogue-card.show-ko .ko-line, 
   .keypoint-box.show-ko .keypoint-ko { 
     display: block; 
@@ -301,7 +299,6 @@
     transition: all 0.15s;
   }
 
-  /* ── VOCAB ── */
   .vocab-row {
     display: flex;
     flex-direction: column;
@@ -338,7 +335,6 @@
     margin-top: 4px;
   }
 
-  /* ── QUIZ ── */
   .quiz-meta {
     display: flex;
     justify-content: space-between;
@@ -444,7 +440,6 @@
   .judge-btn:hover { background: var(--text); color: var(--bg); }
   .judge-btn.wrong:hover { background: var(--red); border-color: var(--red); color: var(--bg); }
 
-  /* ── RESULT ── */
   .quiz-result { display: none; text-align: center; padding: 4rem 1rem; border: 1px solid var(--border); }
   .quiz-result.shown { display: block; }
 
@@ -486,7 +481,6 @@
   }
   .restart-btn:hover { background: var(--text); color: var(--bg); }
 
-  /* ── NOW YOU TALK ── */
   .nyt-intro {
     font-size: 12px;
     color: var(--text-sub);
@@ -539,7 +533,6 @@
     letter-spacing: -0.01em;
   }
 
-  /* ── BOTTOM BAR ── */
   .bottom-bar {
     position: fixed;
     bottom: 0; left: 0; right: 0;
@@ -590,7 +583,7 @@
   }
 
   /* =========================================
-     새로 추가된 인트로(티켓) 페이지 전용 스타일 
+     인트로(티켓) 페이지 스타일 (애니메이션/원형 디자인 수정)
      ========================================= */
   #intro-page {
     position: fixed;
@@ -602,11 +595,14 @@
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+    /* 슬라이드 업 대신 부드러운 투명도(페이드아웃) 애니메이션으로 교체 */
+    transition: opacity 0.8s ease; 
   }
 
   #intro-page.hidden {
-    transform: translateY(-100%);
+    /* 부드럽게 사라지게 하고 클릭 방지 */
+    opacity: 0;
+    pointer-events: none;
   }
 
   .intro-eyebrow {
@@ -644,20 +640,7 @@
     box-shadow: 0 20px 40px rgba(0,0,0,0.08);
   }
 
-  .ticket::before, .ticket::after {
-    content: '';
-    position: absolute;
-    right: 80px;
-    width: 20px;
-    height: 20px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    z-index: 2;
-  }
-  .ticket::before { top: -11px; }
-  .ticket::after { bottom: -11px; }
-
+  /* 티켓 원 모양 삭제함 (가운데 점선만 남겨서 깔끔하게 유지) */
   .ticket-line {
     position: absolute;
     right: 89px;
@@ -703,7 +686,6 @@
     letter-spacing: 0.05em;
   }
 
-  /* 인트로 띄울 동안 뒤에 있는 메인 화면을 감추는 용도 */
   #main-ui {
     opacity: 0;
     pointer-events: none;
@@ -719,8 +701,7 @@
 
 <div id="intro-page">
   <div class="intro-eyebrow">Select Your Journey</div>
-  <div class="ticket-container" id="ticket-list">
-    </div>
+  <div class="ticket-container" id="ticket-list"></div>
 </div>
 
 <div id="main-ui">
@@ -764,9 +745,10 @@
 </div>
 
 <script>
-// ── DATA: 올려주신 최신 데이터 100% 원본 그대로 유지 ──
+// ── DATA: 기존 데이터 보존, date 속성만 추가 ──
 const appData = {
   25: {
+    date: "2026.05.07", // 티켓 우측 하단에 표시될 날짜 추가!
     titleEn: "Depends on my mood.",
     titleKo: "그때그때 기분에 따라 달라요",
     pointEn: "Depends on my mood.",
@@ -796,6 +778,7 @@ const appData = {
     ]
   },
   23: {
+    date: "2026.05.05", // 날짜 추가!
     titleEn: "The spicy ones.",
     titleKo: "매운 거.",
     pointEn: "The spicy ones.",
@@ -829,7 +812,7 @@ let currentDay = '25';
 let quizItems = [];
 
 // =========================================
-// 새로 추가된 인트로(티켓) 및 시작 로직
+// 날짜 출력 적용 및 페이드아웃 효과 호출
 // =========================================
 function initIntro() {
   const container = document.getElementById('ticket-list');
@@ -845,11 +828,9 @@ function initIntro() {
       <div class="ticket-title">${data.titleEn} <em>${data.titleKo}</em></div>
       <div class="ticket-footer">
         <span>Audio Series</span>
-        <span>${day % 2 === 0 ? 'TUE/THU' : 'MON/WED'}</span>
-      </div>
+        <span>${data.date}</span> </div>
     `;
 
-    // 마우스 움직임에 따른 3D 기울기 효과 (마이크로 인터랙션)
     ticket.addEventListener('mousemove', (e) => {
       const rect = ticket.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -877,11 +858,12 @@ function startApp(day) {
   
   loadDay(day);
   
+  // 클릭 시 페이드아웃 발동
   intro.classList.add('hidden');
   main.classList.add('visible');
 }
 
-// ── RENDER ENGINE (기존 로직 원본) ──────────────────────
+// ── RENDER ENGINE ──────────────────────
 function loadDay(day) {
   currentDay = day;
   const data = appData[day];
@@ -971,12 +953,11 @@ function loadDay(day) {
   switchTab('script');
 }
 
-// ── 로직 분리: 해석 토글 함수 (음성 X) ────────────────────────
 function toggleKo(el) {
   if (el) el.classList.toggle('show-ko');
 }
 
-// ── TTS 로직 (기존 기능 유지, 해석 토글 로직 제거) ────────────────────────
+// ── TTS ────────────────────────
 let ttsSpeed = 1.0;
 let currentTtsIdx = null;
 
@@ -1031,7 +1012,7 @@ function ttsCard(idx, text) {
   window.speechSynthesis.speak(u);
 }
 
-// ── 이하 퀴즈 및 탭 로직 (기존과 동일) ────────────────────────
+// ── QUIZ & TAB ────────────────────────
 let quizState = { items: [], idx: 0, correct: 0, wrong: 0 };
 
 function shuffleArray(arr) {
@@ -1140,7 +1121,6 @@ function updateBottom(pct) {
   }
 }
 
-// 기존에는 바로 loadDay('25')를 실행했지만, 이제는 인트로를 먼저 띄웁니다.
 initIntro();
 </script>
 </body>
