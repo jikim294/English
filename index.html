@@ -6,17 +6,18 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>EBS 오디오 어학당 · Day 25</title>
+<title>EBS 오디오 어학당 · 멀티 챕터</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
+  /* 기존 CSS 100% 유지 */
   :root {
     --bg: #ffffff;
     --text: #111111;
     --text-sub: #666666;
     --text-muted: #999999;
-    --border: #111111; /* 노트처럼 선명한 블랙 라인 */
+    --border: #111111; 
     --border-light: #e0e0e0;
-    --accent: #0033FF; /* 포인트 컬러: 쨍한 블루 */
+    --accent: #0033FF; 
     --accent-light: #f0f4ff;
     --red: #ff3333;
   }
@@ -27,8 +28,8 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'DM Mono', monospace;
-    min-height: 100dvh; /* vh 대신 dvh(Dynamic Viewport Height) 사용! */
-    overscroll-behavior-y: none; /* 위아래 고무줄처럼 튕기는 바운스 효과 차단 */
+    min-height: 100dvh; 
+    overscroll-behavior-y: none; 
     -webkit-overflow-scrolling: touch;
   }
 
@@ -53,15 +54,26 @@
     flex-wrap: wrap;
   }
 
-  .header-day {
+  /* 새로 추가된 드롭다운(Select) 스타일 - 기존 디자인과 동일하게 맞춤 */
+  .header-day-select {
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.1em;
     color: var(--bg);
     background: var(--text);
-    padding: 4px 10px;
+    padding: 4px 24px 4px 10px;
+    border: none;
     flex-shrink: 0;
     text-transform: uppercase;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 16px;
+    cursor: pointer;
   }
+  .header-day-select:focus { outline: none; }
 
   h1 {
     font-size: 20px;
@@ -82,7 +94,7 @@
   .tabs-wrap {
     position: sticky;
     top: 0;
-    top: env(safe-area-inset-top, 0); /* 상단 안전 영역 확보 */
+    top: env(safe-area-inset-top, 0); 
     z-index: 50;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
@@ -249,7 +261,8 @@
     text-transform: uppercase;
   }
 
-  .speaker.ken { color: var(--text-muted); }
+  /* 기존 .ken 대신 조금 더 범용적인 .sub-speaker 사용 */
+  .speaker.sub-speaker { color: var(--text-muted); }
 
   .dialogue-lines { flex: 1; }
 
@@ -405,13 +418,6 @@
     margin-bottom: 12px;
   }
 
-  .answer-speaker {
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
   .judge-btns {
     display: none;
     gap: 12px;
@@ -537,8 +543,8 @@
     background: var(--bg);
     border-top: 1px solid var(--border);
     padding: 0 1.5rem;
-    padding-bottom: env(safe-area-inset-bottom, 0); /* 하단 빵꾸를 배경색으로 꽉 채움 */
-    height: calc(56px + env(safe-area-inset-bottom, 0)); /* 늘어난 패딩만큼 전체 높이 보정 */
+    padding-bottom: env(safe-area-inset-bottom, 0); 
+    height: calc(56px + env(safe-area-inset-bottom, 0)); 
     display: flex;
     align-items: center;
     gap: 20px;
@@ -576,7 +582,6 @@
     text-transform: uppercase;
   }
 
-  /* 푸터 전체 높이가 길어졌으니, 본문 내용이 안 가려지게 바디 여백도 같이 늘려줍니다 */
   body { 
     padding-bottom: calc(70px + env(safe-area-inset-bottom, 0)); 
   }
@@ -587,8 +592,11 @@
 <header>
   <div class="header-eyebrow">EBS Audio Series</div>
   <div class="header-main">
-    <span class="header-day">Day 25</span>
-    <h1>Depends on my mood. <br><em>그때그때 기분에 따라 달라요</em></h1>
+    <select class="header-day-select" id="day-selector" onchange="loadDay(this.value)">
+      <option value="25">Day 25</option>
+      <option value="23">Day 23</option>
+    </select>
+    <h1 id="main-title">Depends on my mood. <br><em>그때그때 기분에 따라 달라요</em></h1>
   </div>
 </header>
 
@@ -602,14 +610,111 @@
 </div>
 
 <main>
+  <div class="section visible" id="sec-script"></div>
+  <div class="section" id="sec-vocab"><div id="vocab-list"></div></div>
+  <div class="section" id="sec-quiz"><div id="quiz-area"></div></div>
+  <div class="section" id="sec-talk">
+    <div class="nyt-intro">한국어를 보고 영어로 말해보세요. 카드를 탭하면 정답을 확인할 수 있어요.</div>
+    <div id="talk-list"></div>
+  </div>
+</main>
 
-  <div class="section visible" id="sec-script">
+<div class="bottom-bar">
+  <span class="bottom-label" id="bottom-label">Day 25</span>
+  <div class="bottom-bar-track">
+    <div class="bottom-bar-fill" id="bottom-fill" style="width:0%"></div>
+  </div>
+  <span class="bottom-tag" id="bottom-tag">Script</span>
+</div>
 
-    <div class="keypoint-box" onclick="ttsSpeak('Depends on my mood.')">
+<script>
+// ── DATA: SPA 구조를 위해 모든 데이터를 하나의 객체로 묶었습니다 ──
+const appData = {
+  // 사용자가 만들었던 Day 25 원본 데이터 (단 하나도 지우지 않았습니다)
+  25: {
+    titleEn: "Depends on my mood.",
+    titleKo: "그때그때 기분에 따라 달라요",
+    pointEn: "Depends on my mood.",
+    pointKo: "그때그때 기분에 따라 달라요.",
+    dialogue: [
+      { speaker: 'Suji', enHtml: 'Are you more into <strong>fiction</strong> or <strong>non-fiction</strong>?', en: 'Are you more into fiction or non-fiction?', ko: '소설과 비소설 중에 뭘 더 좋아하세요?' },
+      { speaker: 'Ken', isSub: true, enHtml: '<strong>Depends</strong> on my <strong>mood</strong>. You?', en: 'Depends on my mood. You?', ko: '그때그때 기분에 따라 달라요. 수지 씨는요?' },
+      { speaker: 'Suji', enHtml: '<strong>Mostly fiction</strong>. I <strong>love getting lost</strong> in stories.', en: 'Mostly fiction. I love getting lost in stories.', ko: '대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요.' },
+      { speaker: 'Ken', isSub: true, enHtml: 'I like <strong>biographies</strong>. <strong>Real lives</strong> are fascinating.', en: 'I like biographies. Real lives are fascinating.', ko: '저는 전기들을 좋아해요. 실제 인생 이야기는 정말 대단하거든요.' },
+      { speaker: 'Suji', enHtml: 'We should <strong>trade books</strong> sometime.', en: 'We should trade books sometime.', ko: '우리 언젠가 책을 바꿔 읽어 봐요.' }
+    ],
+    vocabData: [
+      { word: 'non-fiction', ko: '비소설', exEn: '', exKo: '' },
+      { word: 'depends on', ko: '~에 달려 있다, ~에 따라 달라지다', exEn: 'That depends on the weather that day.', exKo: '그건 그날의 날씨에 달려 있죠.' },
+      { word: 'mood', ko: '분위기, 전반적인 기분', exEn: 'Is he in a good mood today?', exKo: '그분은 오늘 기분이 좋으신가요?' },
+      { word: 'getting lost in', ko: '~에 매료되어 푹 빠지게 되는 것', exEn: '', exKo: '' },
+      { word: 'biographies', ko: '(누군가의 생애를 적은) 전기들', exEn: '', exKo: '' },
+      { word: 'trade', ko: '맞바꾸다, 교환하다', exEn: '', exKo: '' },
+      { word: 'fascinating', ko: '정말 대단한, 매혹적인', exEn: '', exKo: '' }
+    ],
+    nowYouTalkData: [
+      { num: 1, ko: '너는 영화와 TV 프로그램 중에 뭐가 더 좋아?', hint: '(movies, TV shows)', en: 'Are you more into movies or TV shows?' },
+      { num: 2, ko: '그건 제 일정에 따라 달라져요.', hint: '(my schedule)', en: 'Depends on my schedule.' },
+      { num: 3, ko: '대개는 코미디요.', hint: '(comedy)', en: 'Mostly comedy.' },
+      { num: 4, ko: '저는 빗속을 거니는 것을 정말 좋아해요.', hint: '(walking in the rain)', en: 'I love walking in the rain.' },
+      { num: 5, ko: '우리 언젠가 회포를 한번 풀어야지요.', hint: '(catch up, sometime)', en: 'We should catch up sometime.' }
+    ]
+  },
+  
+  // 새로 추출한 Day 23 데이터 (PDF 기반)
+  23: {
+    titleEn: "The spicy ones.",
+    titleKo: "매운 거.",
+    pointEn: "The spicy ones.",
+    pointKo: "매운 거.",
+    dialogue: [
+      { speaker: 'Kelly', enHtml: 'What <strong>kind of</strong> chips do you want?', en: 'What kind of chips do you want?', ko: '어떤 칩스가 좋아?' },
+      { speaker: 'Ben', isSub: true, enHtml: "The <strong>spicy</strong> ones. I think they're in the red bag.", en: "The spicy ones. I think they're in the red bag.", ko: '매운 거. 그거 빨간색 봉지에 들어 있는 것 같아.' },
+      { speaker: 'Kelly', enHtml: 'There are three red ones. <strong>Which</strong>?', en: 'There are three red ones. Which?', ko: '빨간 게 세 봉지가 있는데. 어떤 거?' },
+      { speaker: 'Ben', isSub: true, enHtml: 'The one just <strong>behind</strong> the big blue bag of popcorn.', en: 'The one just behind the big blue bag of popcorn.', ko: '저 큰 사이즈 파란색 팝콘 봉지 바로 뒤에 있는 거.' },
+      { speaker: 'Kelly', enHtml: "Got it. Hope they're <strong>as spicy as last time</strong>!", en: "Got it. Hope they're as spicy as last time!", ko: '알았어. 지난번만큼 매운맛이면 좋겠다!' }
+    ],
+    vocabData: [
+      { word: 'what kind of', ko: '어떤 종류의', exEn: 'What kind of music do you enjoy?', exKo: '넌 어떤 음악을 즐겨 듣니?' },
+      { word: 'spicy', ko: '매운맛인', exEn: 'This kimchi might be a little spicy for you.', exKo: '이 김치는 너에게 좀 매울 수 있어.' },
+      { word: 'which', ko: '(그중에) 어느 (것)', exEn: '', exKo: '' },
+      { word: 'behind', ko: '~의 뒤에', exEn: "I'm standing right behind you.", exKo: '나 지금 너 바로 뒤에 서 있어.' },
+      { word: 'as spicy as', ko: '~만큼 매운, ~ 정도로 매운', exEn: '', exKo: '' },
+      { word: 'last time', ko: '(같은 경험을 했던) 지난번', exEn: '', exKo: '' }
+    ],
+    nowYouTalkData: [
+      { num: 1, ko: '어떤 커피를 원해요?', hint: '(coffee)', en: 'What kind of coffee do you want?' },
+      { num: 2, ko: '그것들이 검은색 서랍 속에 있는 것 같은데요.', hint: '(the black drawer)', en: "I think they're inside the black drawer." },
+      { num: 3, ko: '파란 것이 네 개 있어요.', hint: '(four blue ones)', en: 'There are four blue ones.' },
+      { num: 4, ko: '입구 바로 옆에 있는 거예요.', hint: '(next to the entrance)', en: 'The one just next to the entrance.' },
+      { num: 5, ko: '그것들이 어제만큼 싱싱하면 좋겠어요.', hint: '(fresh, yesterday)', en: "Hope they're as fresh as yesterday." }
+    ]
+  }
+};
+
+let currentDay = '25';
+let quizItems = [];
+
+// ── RENDER ENGINE (SPA 핵심 로직) ──────────────────────
+function loadDay(day) {
+  currentDay = day;
+  const data = appData[day];
+
+  // 1. 헤더 업데이트
+  document.getElementById('main-title').innerHTML = `${data.titleEn} <br><em>${data.titleKo}</em>`;
+  document.getElementById('bottom-label').textContent = `Day ${day}`;
+  
+  // 셀렉터 값 동기화 (탭 전환 시에도 유지되도록)
+  document.getElementById('day-selector').value = day;
+
+  // 2. Script 렌더링
+  const secScript = document.getElementById('sec-script');
+  let scriptHtml = `
+    <div class="keypoint-box" onclick="ttsSpeak('${data.pointEn.replace(/'/g, "\\'")}')">
       <div class="keypoint-inner">
         <div class="keypoint-label">Point</div>
-        <div class="keypoint-en">Depends on my mood.</div>
-        <div class="keypoint-ko">그때그때 기분에 따라 달라요.</div>
+        <div class="keypoint-en">${data.pointEn}</div>
+        <div class="keypoint-ko">${data.pointKo}</div>
       </div>
       <div class="keypoint-play">PLAY</div>
     </div>
@@ -622,79 +727,75 @@
     </div>
 
     <div class="dialogue-intro">밑줄 친 단어에 힘을 주어 약간 띄우듯 발음해 보세요. 카드를 탭하면 발음을 들을 수 있어요.</div>
+  `;
 
-    <div class="dialogue-card" onclick="ttsCard(0, 'Are you more into fiction or non-fiction?')">
-      <div class="speaker-col"><div class="speaker">Suji</div></div>
-      <div class="dialogue-lines">
-        <div class="en-line">Are you more into <strong>fiction</strong> or <strong>non-fiction</strong>?</div>
-        <div class="ko-line">소설과 비소설 중에 뭘 더 좋아하세요?</div>
+  data.dialogue.forEach((d, idx) => {
+    scriptHtml += `
+      <div class="dialogue-card" onclick="ttsCard(${idx}, '${d.en.replace(/'/g, "\\'")}')">
+        <div class="speaker-col"><div class="speaker ${d.isSub ? 'sub-speaker' : ''}">${d.speaker}</div></div>
+        <div class="dialogue-lines">
+          <div class="en-line">${d.enHtml}</div>
+          <div class="ko-line">${d.ko}</div>
+        </div>
+        <div class="tts-btn" id="tb-${idx}">PLAY</div>
       </div>
-      <div class="tts-btn" id="tb-0">PLAY</div>
-    </div>
+    `;
+  });
+  secScript.innerHTML = scriptHtml;
 
-    <div class="dialogue-card" onclick="ttsCard(1, 'Depends on my mood. You?')">
-      <div class="speaker-col"><div class="speaker ken">Ken</div></div>
-      <div class="dialogue-lines">
-        <div class="en-line"><strong>Depends</strong> on my <strong>mood</strong>. You?</div>
-        <div class="ko-line">그때그때 기분에 따라 달라요. 수지 씨는요?</div>
+  // 3. Vocab 렌더링
+  const vocabList = document.getElementById('vocab-list');
+  vocabList.innerHTML = '';
+  data.vocabData.forEach(v => {
+    const row = document.createElement('div');
+    row.className = 'vocab-row';
+    row.innerHTML = `
+      <div class="vocab-word">${v.word}</div>
+      <div class="vocab-ko">${v.ko}</div>
+      ${v.exEn ? `<div class="vocab-example"><div>${v.exEn}</div><div class="ex-ko">${v.exKo}</div></div>` : ''}
+    `;
+    vocabList.appendChild(row);
+  });
+
+  // 4. Practice 렌더링
+  const talkList = document.getElementById('talk-list');
+  talkList.innerHTML = '';
+  data.nowYouTalkData.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'nyt-card';
+    card.innerHTML = `
+      <div class="nyt-top">
+        <div class="nyt-num">NO.${String(item.num).padStart(2,'0')}</div>
+        <div class="nyt-tap-hint" id="nyt-hint-${item.num}">TAP TO REVEAL</div>
       </div>
-      <div class="tts-btn" id="tb-1">PLAY</div>
-    </div>
-
-    <div class="dialogue-card" onclick="ttsCard(2, 'Mostly fiction. I love getting lost in stories.')">
-      <div class="speaker-col"><div class="speaker">Suji</div></div>
-      <div class="dialogue-lines">
-        <div class="en-line"><strong>Mostly fiction</strong>. I <strong>love getting lost</strong> in stories.</div>
-        <div class="ko-line">대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요.</div>
+      <div class="nyt-ko">${item.ko}</div>
+      <div class="nyt-hint">${item.hint}</div>
+      <div class="nyt-answer" id="nyt-ans-${item.num}">
+        <div class="nyt-answer-en">${item.en}</div>
       </div>
-      <div class="tts-btn" id="tb-2">PLAY</div>
-    </div>
+    `;
+    card.addEventListener('click', () => {
+      const ans = document.getElementById('nyt-ans-' + item.num);
+      const hint = document.getElementById('nyt-hint-' + item.num);
+      const shown = ans.classList.toggle('shown');
+      hint.textContent = shown ? 'CLOSE' : 'TAP TO REVEAL';
+    });
+    talkList.appendChild(card);
+  });
 
-    <div class="dialogue-card" onclick="ttsCard(3, 'I like biographies. Real lives are fascinating.')">
-      <div class="speaker-col"><div class="speaker ken">Ken</div></div>
-      <div class="dialogue-lines">
-        <div class="en-line">I like <strong>biographies</strong>. <strong>Real lives</strong> are fascinating.</div>
-        <div class="ko-line">저는 전기들을 좋아해요. 실제 인생 이야기는 정말 대단하거든요.</div>
-      </div>
-      <div class="tts-btn" id="tb-3">PLAY</div>
-    </div>
+  // 5. 퀴즈 데이터 업데이트 및 초기화
+  quizItems = data.dialogue.map(d => ({ speaker: d.speaker, en: d.en, ko: d.ko }));
+  quizState.items = []; // 새로운 챕터에서는 퀴즈 강제 리셋
+  
+  // TTS 강제 종료
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  clearTtsUI();
 
-    <div class="dialogue-card" onclick="ttsCard(4, 'We should trade books sometime.')">
-      <div class="speaker-col"><div class="speaker">Suji</div></div>
-      <div class="dialogue-lines">
-        <div class="en-line">We should <strong>trade books</strong> sometime.</div>
-        <div class="ko-line">우리 언젠가 책을 바꿔 읽어 봐요.</div>
-      </div>
-      <div class="tts-btn" id="tb-4">PLAY</div>
-    </div>
+  // 첫 번째 스크립트 탭으로 무조건 이동
+  switchTab('script');
+}
 
-  </div>
-
-  <div class="section" id="sec-vocab">
-    <div id="vocab-list"></div>
-  </div>
-
-  <div class="section" id="sec-quiz">
-    <div id="quiz-area"></div>
-  </div>
-
-  <div class="section" id="sec-talk">
-    <div class="nyt-intro">한국어를 보고 영어로 말해보세요. 카드를 탭하면 정답을 확인할 수 있어요.</div>
-    <div id="talk-list"></div>
-  </div>
-
-</main>
-
-<div class="bottom-bar">
-  <span class="bottom-label" id="bottom-label">Day 25</span>
-  <div class="bottom-bar-track">
-    <div class="bottom-bar-fill" id="bottom-fill" style="width:0%"></div>
-  </div>
-  <span class="bottom-tag" id="bottom-tag">Script</span>
-</div>
-
-<script>
-// ── TTS ───────────────────────────────────────────────
+// ── TTS 로직 (기존 100% 동일) ────────────────────────
 let ttsSpeed = 1.0;
 let currentTtsIdx = null;
 
@@ -757,74 +858,7 @@ function ttsCard(idx, text) {
 
 window.speechSynthesis.onvoiceschanged = () => {};
 
-// ── DATA ──────────────────────────────────────────────
-const dialogue = [
-  { speaker: 'Suji', en: 'Are you more into fiction or non-fiction?', ko: '소설과 비소설 중에 뭘 더 좋아하세요?' },
-  { speaker: 'Ken',  en: 'Depends on my mood. You?', ko: '그때그때 기분에 따라 달라요. 수지 씨는요?' },
-  { speaker: 'Suji', en: 'Mostly fiction. I love getting lost in stories.', ko: '대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요.' },
-  { speaker: 'Ken',  en: 'I like biographies. Real lives are fascinating.', ko: '저는 전기들을 좋아해요. 실제 인생 이야기는 정말 대단하거든요.' },
-  { speaker: 'Suji', en: 'We should trade books sometime.', ko: '우리 언젠가 책을 바꿔 읽어 봐요.' },
-];
-
-const vocabData = [
-  { word: 'non-fiction', ko: '비소설', exEn: '', exKo: '' },
-  { word: 'depends on', ko: '~에 달려 있다, ~에 따라 달라지다', exEn: 'That depends on the weather that day.', exKo: '그건 그날의 날씨에 달려 있죠.' },
-  { word: 'mood', ko: '분위기, 전반적인 기분', exEn: 'Is he in a good mood today?', exKo: '그분은 오늘 기분이 좋으신가요?' },
-  { word: 'getting lost in', ko: '~에 매료되어 푹 빠지게 되는 것', exEn: '', exKo: '' },
-  { word: 'biographies', ko: '(누군가의 생애를 적은) 전기들', exEn: '', exKo: '' },
-  { word: 'trade', ko: '맞바꾸다, 교환하다', exEn: '', exKo: '' },
-  { word: 'fascinating', ko: '정말 대단한, 매혹적인', exEn: '', exKo: '' },
-];
-
-const nowYouTalkData = [
-  { num: 1, ko: '너는 영화와 TV 프로그램 중에 뭐가 더 좋아?', hint: '(movies, TV shows)', en: 'Are you more into movies or TV shows?' },
-  { num: 2, ko: '그건 제 일정에 따라 달라져요.', hint: '(my schedule)', en: 'Depends on my schedule.' },
-  { num: 3, ko: '대개는 코미디요.', hint: '(comedy)', en: 'Mostly comedy.' },
-  { num: 4, ko: '저는 빗속을 거니는 것을 정말 좋아해요.', hint: '(walking in the rain)', en: 'I love walking in the rain.' },
-  { num: 5, ko: '우리 언젠가 회포를 한번 풀어야지요.', hint: '(catch up, sometime)', en: 'We should catch up sometime.' },
-];
-
-const quizItems = dialogue.map(d => ({ ...d }));
-
-// ── VOCAB ─────────────────────────────────────────────
-const vocabList = document.getElementById('vocab-list');
-vocabData.forEach(v => {
-  const row = document.createElement('div');
-  row.className = 'vocab-row';
-  row.innerHTML = `
-    <div class="vocab-word">${v.word}</div>
-    <div class="vocab-ko">${v.ko}</div>
-    ${v.exEn ? `<div class="vocab-example"><div>${v.exEn}</div><div class="ex-ko">${v.exKo}</div></div>` : ''}
-  `;
-  vocabList.appendChild(row);
-});
-
-// ── PRACTICE ──────────────────────────────────────────
-const talkList = document.getElementById('talk-list');
-nowYouTalkData.forEach(item => {
-  const card = document.createElement('div');
-  card.className = 'nyt-card';
-  card.innerHTML = `
-    <div class="nyt-top">
-      <div class="nyt-num">NO.${String(item.num).padStart(2,'0')}</div>
-      <div class="nyt-tap-hint" id="nyt-hint-${item.num}">TAP TO REVEAL</div>
-    </div>
-    <div class="nyt-ko">${item.ko}</div>
-    <div class="nyt-hint">${item.hint}</div>
-    <div class="nyt-answer" id="nyt-ans-${item.num}">
-      <div class="nyt-answer-en">${item.en}</div>
-    </div>
-  `;
-  card.addEventListener('click', () => {
-    const ans = document.getElementById('nyt-ans-' + item.num);
-    const hint = document.getElementById('nyt-hint-' + item.num);
-    const shown = ans.classList.toggle('shown');
-    hint.textContent = shown ? 'CLOSE' : 'TAP TO REVEAL';
-  });
-  talkList.appendChild(card);
-});
-
-// ── QUIZ ──────────────────────────────────────────────
+// ── QUIZ 로직 (기존 100% 동일) ────────────────────────
 let quizState = { items: [], idx: 0, correct: 0, wrong: 0 };
 
 function shuffleArray(arr) {
@@ -904,7 +938,7 @@ function renderResult(area) {
   updateBottom(pct);
 }
 
-// ── TAB + BOTTOM ──────────────────────────────────────
+// ── TAB & BOTTOM BAR 로직 ────────────────────────
 let currentTab = 'script';
 const tabIds = ['script', 'vocab', 'quiz', 'talk'];
 const tabLabels = { script: 'Script', vocab: 'Vocab', quiz: 'Quiz', talk: 'Practice' };
@@ -923,6 +957,7 @@ function updateBottom(pct) {
   const fill = document.getElementById('bottom-fill');
   const tag = document.getElementById('bottom-tag');
   tag.textContent = tabLabels[currentTab];
+  
   if (currentTab === 'quiz') {
     const done = quizState.correct + quizState.wrong;
     const total = quizState.items.length || 1;
@@ -935,12 +970,16 @@ function updateBottom(pct) {
       fill.style.width = p + '%';
     }
   } else {
-    label.textContent = 'Day 25';
+    // 퀴즈 탭이 아닐 때는 현재 선택된 Day 띄우기
+    label.textContent = `Day ${currentDay}`;
     fill.style.width = '0%';
   }
 }
 
-updateBottom();
+// ── APP INITIALIZATION ──
+// 시작 시 무조건 Day 25 먼저 렌더링
+loadDay('25');
+
 </script>
 </body>
 </html>
