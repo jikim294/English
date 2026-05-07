@@ -27,9 +27,9 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    overscroll-behavior: none;
-    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh; /* vh 대신 dvh(Dynamic Viewport Height) 사용! */
+    overscroll-behavior-y: none; /* 위아래 고무줄처럼 튕기는 바운스 효과 차단 */
+    -webkit-overflow-scrolling: touch;
   }
 
   /* ── HEADER ── */
@@ -82,6 +82,7 @@
   .tabs-wrap {
     position: sticky;
     top: 0;
+    top: env(safe-area-inset-top, 0); /* 상단 안전 영역 확보 */
     z-index: 50;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
@@ -536,7 +537,8 @@
     background: var(--bg);
     border-top: 1px solid var(--border);
     padding: 0 1.5rem;
-    height: 56px;
+    padding-bottom: env(safe-area-inset-bottom, 0); /* 하단 빵꾸를 배경색으로 꽉 채움 */
+    height: calc(56px + env(safe-area-inset-bottom, 0)); /* 늘어난 패딩만큼 전체 높이 보정 */
     display: flex;
     align-items: center;
     gap: 20px;
@@ -574,7 +576,10 @@
     text-transform: uppercase;
   }
 
-  body { padding-bottom: 70px; }
+  /* 푸터 전체 높이가 길어졌으니, 본문 내용이 안 가려지게 바디 여백도 같이 늘려줍니다 */
+  body { 
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0)); 
+  }
 </style>
 </head>
 <body>
