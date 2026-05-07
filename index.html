@@ -19,8 +19,6 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
-  /* 모바일 스크롤 고정 마법의 CSS */
   html, body { 
     background: var(--bg); color: var(--text); 
     font-family: 'DM Mono', monospace; 
@@ -39,7 +37,7 @@
     padding: 6px 12px; font-size: 11px; cursor: pointer; text-transform: uppercase;
   }
 
-  /* ── BOTTOM SHEET (Chapter List) ── */
+  /* ── BOTTOM SHEET ── */
   #chapter-sheet {
     position: fixed; bottom: -100%; left: 0; right: 0;
     background: var(--bg); border-top: 1px solid var(--border);
@@ -53,38 +51,68 @@
   }
   .sheet-overlay.open { display: block; }
   .chapter-item {
-    padding: 1rem 0; border-bottom: 1px solid var(--border-light);
-    font-size: 16px; cursor: pointer; display: flex; justify-content: space-between;
+    padding: 1.25rem 0; border-bottom: 1px solid var(--border-light);
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
   }
 
   /* ── TABS ── */
   .tabs-wrap { position: sticky; top: var(--safe-top); z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); }
-  .tabs { display: flex; padding: 0 1.5rem; }
+  .tabs { display: flex; padding: 0 1.5rem; overflow-x: auto; scrollbar-width: none; }
   .tab {
     padding: 16px 0; margin-right: 24px; font-size: 11px; border: none; background: none;
-    text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent;
+    text-transform: uppercase; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
   }
   .tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
 
-  /* ── CONTENT AREA ── */
-  main { padding: 2rem 1.5rem; max-width: 600px; margin: 0 auto; padding-bottom: calc(80px + var(--safe-bottom)); }
+  /* ── MAIN CONTENT ── */
+  main { padding: 2rem 1.5rem; max-width: 600px; margin: 0 auto; padding-bottom: calc(100px + var(--safe-bottom)); }
   .section { display: none; }
   .section.visible { display: block; }
 
-  .card { border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1rem; }
-  .label { font-size: 9px; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid var(--accent); display: inline-block; margin-bottom: 12px; }
-  .row { padding: 1.25rem 0; border-bottom: 1px solid var(--border-light); }
-  .speaker { font-size: 10px; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
-  .en { font-size: 17px; line-height: 1.5; margin-bottom: 6px; }
+  /* UI Components */
+  .card { border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1.5rem; }
+  .label { font-size: 10px; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid var(--accent); display: inline-block; margin-bottom: 12px; padding-bottom: 2px; }
+  
+  /* Dialogue Card */
+  .dialogue-card { display: flex; gap: 16px; padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); cursor: pointer; }
+  .dialogue-card.playing { background: var(--accent-light); margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
+  .speaker { font-size: 10px; color: var(--accent); text-transform: uppercase; min-width: 45px; margin-top: 4px; }
+  .speaker.ken { color: var(--text-muted); }
+  .en { font-size: 17px; line-height: 1.6; margin-bottom: 6px; }
   .ko { font-size: 13px; color: var(--text-sub); font-family: 'Gowun Dodum'; }
+  .play-btn { font-size: 10px; border: 1px solid var(--border-light); padding: 4px 8px; height: fit-content; text-transform: uppercase; }
 
-  /* ── FOOTER (모바일 하단 빵꾸 방지) ── */
+  /* TTS Controls */
+  .tts-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem; }
+  .speed-btn { padding: 6px 10px; border: 1px solid var(--border-light); font-size: 11px; cursor: pointer; background: #fff; }
+  .speed-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  /* Vocab */
+  .vocab-row { padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); }
+  .vocab-word { font-size: 18px; color: var(--accent); margin-bottom: 8px; }
+  .vocab-ex { font-size: 13px; color: var(--text-muted); border-left: 2px solid var(--border-light); padding-left: 12px; margin-top: 8px; }
+
+  /* Quiz Area */
+  .quiz-box { border: 1px solid var(--border); padding: 2.5rem 1.5rem; text-align: center; background: #fff; }
+  .ans-box { display: none; margin-top: 1.5rem; padding: 1.5rem; background: var(--accent-light); border: 1px solid var(--accent); color: var(--accent); font-size: 18px; }
+  .ans-box.shown { display: block; }
+  .judge-btns { display: none; gap: 10px; margin-top: 1rem; }
+  .judge-btns.shown { display: flex; }
+  .btn-full { width: 100%; padding: 16px; border: 1px solid var(--text); background: var(--text); color: #fff; text-transform: uppercase; font-size: 12px; cursor: pointer; }
+  .btn-outline { flex: 1; padding: 14px; border: 1px solid var(--border); background: #fff; text-transform: uppercase; font-size: 11px; cursor: pointer; }
+
+  /* Practice (Now You Talk) */
+  .nyt-card { padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); cursor: pointer; }
+  .nyt-ans { display: none; margin-top: 12px; color: var(--accent); font-size: 17px; font-weight: 500; }
+  .nyt-ans.shown { display: block; }
+
+  /* FOOTER */
   footer {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: var(--bg); border-top: 1px solid var(--border);
     padding: 0 1.5rem calc(var(--safe-bottom));
     height: calc(56px + var(--safe-bottom));
-    display: flex; align-items: center; justify-content: space-between; font-size: 11px;
+    display: flex; align-items: center; justify-content: space-between; font-size: 11px; z-index: 100;
   }
 </style>
 </head>
@@ -92,9 +120,9 @@
 
 <header>
   <div class="chapter-selector" onclick="toggleSheet(true)">
-    <span id="current-day-label">Day 25</span> ▾
+    <span id="day-label">Day 25</span> ▾
   </div>
-  <h1 id="main-title" style="margin-top:1rem; font-weight:400; font-size:22px;">Loading...</h1>
+  <h1 id="title-label" style="margin-top:1.25rem; font-weight:400; font-size:22px; letter-spacing:-0.02em;">Loading...</h1>
 </header>
 
 <div class="tabs-wrap">
@@ -102,28 +130,53 @@
     <button class="tab active" onclick="switchTab('script')">Script</button>
     <button class="tab" onclick="switchTab('vocab')">Vocab</button>
     <button class="tab" onclick="switchTab('quiz')">Quiz</button>
+    <button class="tab" onclick="switchTab('talk')">Practice</button>
   </div>
 </div>
 
-<main id="app-content">
-  <div id="sec-script" class="section visible"></div>
-  <div id="sec-vocab" class="section"></div>
-  <div id="sec-quiz" class="section"></div>
+<main>
+  <div id="sec-script" class="section visible">
+    <div id="keypoint-card"></div>
+    <div class="tts-controls">
+      <span style="font-size:10px; text-transform:uppercase; margin-right:8px; color:var(--text-muted);">Speed</span>
+      <button class="speed-btn" onclick="changeSpeed(0.7, this)">0.7x</button>
+      <button class="speed-btn active" onclick="changeSpeed(1.0, this)">1.0x</button>
+      <button class="speed-btn" onclick="changeSpeed(1.2, this)">1.2x</button>
+    </div>
+    <div id="script-list"></div>
+  </div>
+
+  <div id="sec-vocab" class="section">
+    <div id="vocab-list"></div>
+  </div>
+
+  <div id="sec-quiz" class="section">
+    <div id="quiz-ui"></div>
+  </div>
+
+  <div id="sec-talk" class="section">
+    <div style="font-size:12px; color:var(--text-sub); margin-bottom:1.5rem; font-family:'Gowun Dodum';">보고 영어로 말해보세요. 탭하면 정답이 보입니다.</div>
+    <div id="talk-list"></div>
+  </div>
 </main>
 
 <div class="sheet-overlay" id="overlay" onclick="toggleSheet(false)"></div>
 <div id="chapter-sheet">
-  <div style="font-size:11px; color:var(--text-muted); margin-bottom:1.5rem; text-transform:uppercase;">Select Chapter</div>
+  <div style="font-size:10px; color:var(--text-muted); margin-bottom:1.5rem; text-transform:uppercase; letter-spacing:0.1em;">Chapters</div>
   <div id="chapter-list"></div>
 </div>
 
 <footer>
-  <span id="footer-day">DAY 25</span>
-  <span style="color:var(--text-muted)">EBS Audio</span>
+  <span id="footer-day" style="text-transform:uppercase; letter-spacing:0.05em;">Day 25</span>
+  <span style="color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em;">EBS Audio Series</span>
 </footer>
 
 <script>
-// JSON 데이터 (Day 25 & Day 26)
+let ttsSpeed = 1.0;
+let currentDay = "day25";
+let quizIdx = 0;
+let quizScore = { ok: 0, no: 0 };
+
 const ALL_DATA = {
   "day25": {
     "day": 25,
@@ -132,15 +185,20 @@ const ALL_DATA = {
     "dialogue": [
       { "speaker": "Suji", "en": "Are you more into fiction or non-fiction?", "ko": "소설과 비소설 중에 뭘 더 좋아하세요?" },
       { "speaker": "Ken", "en": "Depends on my mood. You?", "ko": "그때그때 기분에 따라 달라요. 수지 씨는요?" },
-      { "speaker": "Suji", "en": "Mostly fiction. I love getting lost in stories.", "ko": "대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요." }
+      { "speaker": "Suji", "en": "Mostly fiction. I love getting lost in stories.", "ko": "대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요." },
+      { "speaker": "Ken", "en": "I like biographies. Real lives are fascinating.", "ko": "저는 전기들을 좋아해요. 실제 인생 이야기는 정말 대단하거든요." },
+      { "speaker": "Suji", "en": "We should trade books sometime.", "ko": "우리 언젠가 책을 바꿔 읽어 봐요." }
     ],
     "vocab": [
       { "word": "non-fiction", "ko": "비소설" },
-      { "word": "depends on", "ko": "~에 달려 있다, ~에 따라 달라지다" }
+      { "word": "depends on", "ko": "~에 달려 있다, ~에 따라 달라지다", "exEn": "That depends on the weather.", "exKo": "그건 날씨에 달려 있죠." },
+      { "word": "getting lost in", "ko": "~에 매료되어 푹 빠지는 것" },
+      { "word": "fascinating", "ko": "정말 대단한, 매혹적인" }
     ],
-    "quiz": [
-      { "en": "Are you more into movies or TV shows?", "ko": "너는 영화와 TV 프로그램 중에 뭐가 더 좋아?" },
-      { "en": "Depends on my schedule.", "ko": "그건 제 일정에 따라 달라져요." }
+    "talk": [
+      { "ko": "너는 영화와 TV 프로그램 중에 뭐가 더 좋아?", "en": "Are you more into movies or TV shows?" },
+      { "ko": "그건 제 일정에 따라 달라져요.", "en": "Depends on my schedule." },
+      { "ko": "우리 언젠가 회포를 한번 풀어야지요.", "en": "We should catch up sometime." }
     ]
   },
   "day26": {
@@ -157,76 +215,160 @@ const ALL_DATA = {
     "vocab": [
       { "word": "what kind of", "ko": "어떤 종류의" },
       { "word": "spicy", "ko": "매운맛인" },
-      { "word": "behind", "ko": "~의 뒤에" }
+      { "word": "behind", "ko": "~의 뒤에" },
+      { "word": "as fresh as", "ko": "~만큼 싱싱한" }
     ],
-    "quiz": [
-      { "en": "What kind of coffee do you want?", "ko": "어떤 커피를 원해요?" },
-      { "en": "There are four blue ones.", "ko": "파란 것이 네 개 있어요." }
+    "talk": [
+      { "ko": "어떤 커피를 원해요?", "en": "What kind of coffee do you want?" },
+      { "ko": "파란 것이 네 개 있어요.", "en": "There are four blue ones." },
+      { "ko": "그것들이 어제만큼 싱싱하면 좋겠어요.", "en": "Hope they're as fresh as yesterday." }
     ]
   }
 };
-
-let currentDay = "day25";
 
 function init() {
   renderChapterList();
   loadDay('day25');
 }
 
-function loadDay(dayKey) {
-  currentDay = dayKey;
-  const data = ALL_DATA[dayKey];
+function loadDay(key) {
+  currentDay = key;
+  const data = ALL_DATA[key];
+  quizIdx = 0; quizScore = { ok: 0, no: 0 };
   
-  // 헤더 & 푸터 텍스트 변경
-  document.getElementById('current-day-label').textContent = `Day ${data.day}`;
-  document.getElementById('main-title').textContent = data.title;
-  document.getElementById('footer-day').textContent = `DAY ${data.day}`;
-  
-  // 스크립트 렌더링
-  document.getElementById('sec-script').innerHTML = `
-    <div class="card">
-      <div class="label">Point</div>
-      <div style="font-size:20px;">${data.keypoint}</div>
+  document.getElementById('day-label').textContent = `Day ${data.day}`;
+  document.getElementById('title-label').textContent = data.title;
+  document.getElementById('footer-day').textContent = `Day ${data.day}`;
+
+  // Keypoint
+  document.getElementById('keypoint-card').innerHTML = `
+    <div class="card" onclick="speak('${data.keypoint}')">
+      <div class="label">Point of the day</div>
+      <div style="font-size:24px; letter-spacing:-0.02em;">${data.keypoint}</div>
+      <div style="font-size:14px; color:var(--text-sub); margin-top:8px;">${data.title}</div>
     </div>
-  ` + data.dialogue.map(d => `
-    <div class="row">
-      <div class="speaker">${d.speaker}</div>
-      <div class="en">${d.en}</div>
-      <div class="ko">${d.ko}</div>
+  `;
+
+  // Script
+  document.getElementById('script-list').innerHTML = data.dialogue.map((d, i) => `
+    <div class="dialogue-card" id="dc-${i}" onclick="playCard(${i}, '${d.en}')">
+      <div class="speaker ${d.speaker==='Ken'||d.speaker==='Ben'?'ken':''}">${d.speaker}</div>
+      <div style="flex:1">
+        <div class="en">${d.en}</div>
+        <div class="ko">${d.ko}</div>
+      </div>
+      <div class="play-btn" id="pb-${i}">Play</div>
     </div>
   `).join('');
 
-  // 단어장 렌더링
-  document.getElementById('sec-vocab').innerHTML = data.vocab.map(v => `
-    <div class="row">
-      <div class="en" style="color:var(--accent)">${v.word}</div>
+  // Vocab
+  document.getElementById('vocab-list').innerHTML = data.vocab.map(v => `
+    <div class="vocab-row">
+      <div class="vocab-word">${v.word}</div>
       <div class="ko">${v.ko}</div>
+      ${v.exEn ? `<div class="vocab-ex"><div>${v.exEn}</div><div style="font-family:'Gowun Dodum'; margin-top:2px;">${v.exKo}</div></div>` : ''}
     </div>
   `).join('');
 
-  // 퀴즈(연습) 렌더링
-  document.getElementById('sec-quiz').innerHTML = data.quiz.map((q, i) => `
-    <div class="row">
-      <div class="speaker">Q${i+1}</div>
-      <div class="ko" style="font-size:15px; color:var(--text); margin-bottom:8px;">${q.ko}</div>
-      <div class="en" style="font-size:14px; color:var(--accent);">${q.en}</div>
+  // Practice
+  document.getElementById('talk-list').innerHTML = data.talk.map((t, i) => `
+    <div class="nyt-card" onclick="toggleNyt(${i})">
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">NO. 0${i+1}</div>
+      <div class="ko" style="font-size:18px; color:var(--text);">${t.ko}</div>
+      <div class="nyt-ans" id="na-${i}">${t.en}</div>
     </div>
   `).join('');
 
-  toggleSheet(false); // 바텀 시트 닫기
+  renderQuiz();
+  toggleSheet(false);
 }
 
-function toggleSheet(show) {
-  document.getElementById('chapter-sheet').classList.toggle('open', show);
-  document.getElementById('overlay').classList.toggle('open', show);
+// ── TTS ──
+function changeSpeed(s, btn) {
+  ttsSpeed = s;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function speak(txt, callback) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = 'en-US';
+  u.rate = ttsSpeed;
+  u.onend = callback;
+  window.speechSynthesis.speak(u);
+}
+
+function playCard(idx, txt) {
+  const card = document.getElementById('dc-'+idx);
+  const btn = document.getElementById('pb-'+idx);
+  document.querySelectorAll('.dialogue-card').forEach(c => c.classList.remove('playing'));
+  document.querySelectorAll('.play-btn').forEach(b => b.textContent = 'Play');
+  
+  card.classList.add('playing');
+  btn.textContent = 'Stop';
+  speak(txt, () => {
+    card.classList.remove('playing');
+    btn.textContent = 'Play';
+  });
+}
+
+// ── QUIZ ──
+function renderQuiz() {
+  const ui = document.getElementById('quiz-ui');
+  const items = ALL_DATA[currentDay].dialogue;
+  if(quizIdx >= items.length) {
+    const pct = Math.round((quizScore.ok / items.length) * 100);
+    ui.innerHTML = `
+      <div class="quiz-box">
+        <div style="font-size:48px; font-weight:300;">${quizScore.ok}/${items.length}</div>
+        <div style="font-size:12px; color:var(--accent); margin-top:8px; text-transform:uppercase;">Accuracy ${pct}%</div>
+        <button class="btn-full" style="margin-top:2rem;" onclick="loadDay('${currentDay}')">Retry</button>
+      </div>`;
+    return;
+  }
+  const item = items[quizIdx];
+  ui.innerHTML = `
+    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:12px; color:var(--text-muted);">
+      <span>QUESTION ${quizIdx+1}/${items.length}</span>
+      <span>SCORE ${quizScore.ok} O · ${quizScore.no} X</span>
+    </div>
+    <div class="quiz-box">
+      <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; margin-bottom:1rem;">Translate to English</div>
+      <div style="font-size:19px; font-family:'Gowun Dodum'; line-height:1.6;">${item.ko}</div>
+      <div class="ans-box" id="q-ans">${item.en}</div>
+    </div>
+    <button class="btn-full" id="q-rev" style="margin-top:1rem;" onclick="revealQuiz()">Show Answer</button>
+    <div class="judge-btns" id="q-judge">
+      <button class="btn-outline" onclick="judge(true)">Correct</button>
+      <button class="btn-outline" onclick="judge(false)">Wrong</button>
+    </div>
+  `;
+}
+
+function revealQuiz() {
+  document.getElementById('q-ans').classList.add('shown');
+  document.getElementById('q-rev').style.display = 'none';
+  document.getElementById('q-judge').classList.add('shown');
+}
+
+function judge(isOk) {
+  if(isOk) quizScore.ok++; else quizScore.no++;
+  quizIdx++;
+  renderQuiz();
+}
+
+// ── UI UI ──
+function toggleSheet(s) {
+  document.getElementById('chapter-sheet').classList.toggle('open', s);
+  document.getElementById('overlay').classList.toggle('open', s);
 }
 
 function renderChapterList() {
-  const list = document.getElementById('chapter-list');
-  list.innerHTML = Object.keys(ALL_DATA).map(key => `
-    <div class="chapter-item" onclick="loadDay('${key}')">
-      <span>Day ${ALL_DATA[key].day}</span>
-      <span style="font-size:11px; color:var(--text-muted);">${ALL_DATA[key].title}</span>
+  document.getElementById('chapter-list').innerHTML = Object.keys(ALL_DATA).map(k => `
+    <div class="chapter-item" onclick="loadDay('${k}')">
+      <span style="font-family:'DM Mono';">Day ${ALL_DATA[k].day}</span>
+      <span style="font-size:13px; font-family:'Gowun Dodum'; color:var(--text-sub);">${ALL_DATA[k].title}</span>
     </div>
   `).join('');
 }
@@ -236,6 +378,11 @@ function switchTab(id) {
   event.target.classList.add('active');
   document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
   document.getElementById('sec-' + id).classList.add('visible');
+  window.scrollTo(0,0);
+}
+
+function toggleNyt(i) {
+  document.getElementById('na-'+i).classList.toggle('shown');
 }
 
 init();
