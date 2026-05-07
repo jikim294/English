@@ -849,7 +849,7 @@ function renderQuiz() {
   area.innerHTML = `
     <div class="quiz-meta">
       <span>Q.${current} / ${total}</span>
-      <span>${quizState.correct} O / ${quizState.wrong} X</span>
+     <span>CORRECT ${quizState.correct} &middot; WRONG ${quizState.wrong}</span>
     </div>
     <div class="quiz-bar-bg"><div class="quiz-bar" style="width:${((current-1)/total)*100}%"></div></div>
 
