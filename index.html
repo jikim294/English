@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>EBS 오디오 어학당 · 학습 도우미</title>
+<title>EBS 오디오 어학당 · 멀티 챕터</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -133,7 +133,7 @@
   .section { display: none; }
   .section.visible { display: block; }
 
-  /* ── UI 수정 포인트: 한글 해석 기본 숨김 처리 ── */
+  /* ── UI 수정 포인트: 한글 해석 기본 숨김 ── */
   .ko-line, .keypoint-ko { 
     display: none; 
     transition: all 0.2s;
@@ -631,7 +631,7 @@
 </div>
 
 <script>
-// ── DATA: 기존 데이터는 절대 건드리지 않았습니다 ──
+// ── DATA: 기존 데이터 보존 ──
 const appData = {
   25: {
     titleEn: "Depends on my mood.",
@@ -695,7 +695,7 @@ const appData = {
 let currentDay = '25';
 let quizItems = [];
 
-// ── RENDER ENGINE (UI 수정 포인트: onclick에 this 추가) ──────────────────────
+// ── RENDER ENGINE (UI 로직 수정) ──────────────────────
 function loadDay(day) {
   currentDay = day;
   const data = appData[day];
@@ -706,13 +706,13 @@ function loadDay(day) {
 
   const secScript = document.getElementById('sec-script');
   let scriptHtml = `
-    <div class="keypoint-box" onclick="ttsSpeak('${data.pointEn.replace(/'/g, "\\'")}', this)">
+    <div class="keypoint-box" onclick="toggleKo(this)">
       <div class="keypoint-inner">
         <div class="keypoint-label">Point</div>
         <div class="keypoint-en">${data.pointEn}</div>
         <div class="keypoint-ko">${data.pointKo}</div>
       </div>
-      <div class="keypoint-play">PLAY</div>
+      <div class="keypoint-play" onclick="event.stopPropagation(); ttsSpeak('${data.pointEn.replace(/'/g, "\\'")}')">PLAY</div>
     </div>
 
     <div class="tts-controls">
@@ -722,18 +722,18 @@ function loadDay(day) {
       <button class="tts-speed-btn" onclick="setSpeed(1.2, this)">1.2x</button>
     </div>
 
-    <div class="dialogue-intro">밑줄 친 단어에 힘을 주어 약간 띄우듯 발음해 보세요. 카드를 탭하면 한글 해석을 볼 수 있어요.</div>
+    <div class="dialogue-intro">카드를 탭하면 해석이 열립니다. 음성은 우측 PLAY 버튼을 눌러주세요.</div>
   `;
 
   data.dialogue.forEach((d, idx) => {
     scriptHtml += `
-      <div class="dialogue-card" onclick="ttsCard(${idx}, '${d.en.replace(/'/g, "\\'")}', this)">
+      <div class="dialogue-card" onclick="toggleKo(this)">
         <div class="speaker-col"><div class="speaker ${d.isSub ? 'sub-speaker' : ''}">${d.speaker}</div></div>
         <div class="dialogue-lines">
           <div class="en-line">${d.enHtml}</div>
           <div class="ko-line">${d.ko}</div>
         </div>
-        <div class="tts-btn" id="tb-${idx}">PLAY</div>
+        <div class="tts-btn" id="tb-${idx}" onclick="event.stopPropagation(); ttsCard(${idx}, '${d.en.replace(/'/g, "\\'")}')">PLAY</div>
       </div>
     `;
   });
@@ -785,7 +785,12 @@ function loadDay(day) {
   switchTab('script');
 }
 
-// ── TTS 로직 (UI 수정 포인트: show-ko 클래스 토글 추가) ────────────────────────
+// ── 로직 분리: 해석 토글 함수 (음성 X) ────────────────────────
+function toggleKo(el) {
+  if (el) el.classList.toggle('show-ko');
+}
+
+// ── TTS 로직 (기존 기능 유지, 해석 토글 로직 제거) ────────────────────────
 let ttsSpeed = 1.0;
 let currentTtsIdx = null;
 
@@ -810,22 +815,15 @@ function makeUtterance(text) {
   return u;
 }
 
-function ttsSpeak(text, el) {
+function ttsSpeak(text) {
   if (!window.speechSynthesis) return;
-  // 탭하면 해석 보이기
-  if (el) el.classList.toggle('show-ko');
-  
   window.speechSynthesis.cancel();
   clearTtsUI();
   window.speechSynthesis.speak(makeUtterance(text));
 }
 
-function ttsCard(idx, text, el) {
+function ttsCard(idx, text) {
   if (!window.speechSynthesis) return;
-  
-  // 탭하면 해석 보이기
-  if (el) el.classList.toggle('show-ko');
-
   const btn = document.getElementById('tb-' + idx);
   const card = document.querySelectorAll('.dialogue-card')[idx];
 
@@ -847,7 +845,7 @@ function ttsCard(idx, text, el) {
   window.speechSynthesis.speak(u);
 }
 
-// ── 이하 퀴즈 및 탭 로직 (기존 100% 동일) ────────────────────────
+// ── 이하 퀴즈 및 탭 로직 (기존과 동일) ────────────────────────
 let quizState = { items: [], idx: 0, correct: 0, wrong: 0 };
 
 function shuffleArray(arr) {
@@ -869,29 +867,23 @@ function renderQuiz() {
   const area = document.getElementById('quiz-area');
   area.innerHTML = '';
   if (quizState.idx >= quizState.items.length) { renderResult(area); return; }
-
   const item = quizState.items[quizState.idx];
   const total = quizState.items.length;
   const current = quizState.idx + 1;
-
   area.innerHTML = `
     <div class="quiz-meta">
       <span>Q.${current} / ${total}</span>
      <span>CORRECT ${quizState.correct} &middot; WRONG ${quizState.wrong}</span>
     </div>
     <div class="quiz-bar-bg"><div class="quiz-bar" style="width:${((current-1)/total)*100}%"></div></div>
-
     <div class="quiz-prompt-box">
       <div class="quiz-type-label">Translate into English</div>
       <div class="quiz-prompt">${item.ko}</div>
     </div>
-
     <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()">Show Answer</button>
-
     <div class="answer-box" id="answer-box">
       <div class="answer-en">${item.en}</div>
     </div>
-
     <div class="judge-btns" id="judge-btns">
       <button class="judge-btn correct" onclick="judge(true)">Correct</button>
       <button class="judge-btn wrong" onclick="judge(false)">Wrong</button>
