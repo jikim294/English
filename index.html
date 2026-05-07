@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>캐나다 생존 영어 스크립트</title>
+<title>EBS 오디오 어학당 · Day 25</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -17,6 +17,8 @@
     --accent: #c8f080;
     --accent-dim: #8aab45;
     --tag: #2a2a2a;
+    --red: #ff6b6b;
+    --blue: #80c8f0;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -30,36 +32,46 @@
   }
 
   header {
-    padding: 2rem 1.25rem 1rem;
+    padding: 1.5rem 1.25rem 1rem;
     border-bottom: 1px solid var(--border);
   }
 
   .header-label {
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--accent);
     letter-spacing: 0.15em;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.3;
   }
 
-  h1 span {
-    color: var(--text-sub);
+  h1 .day {
+    color: var(--accent);
+    font-size: 14px;
+    font-family: 'DM Mono', monospace;
     font-weight: 400;
+    display: block;
+    margin-bottom: 3px;
   }
 
+  h1 span { color: var(--text-sub); font-weight: 400; }
+
+  /* TABS */
   .tabs-wrap {
-    padding: 1rem 1.25rem 0;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
   }
   .tabs-wrap::-webkit-scrollbar { display: none; }
 
@@ -67,11 +79,12 @@
     display: flex;
     gap: 0;
     width: max-content;
+    padding: 0 1.25rem;
   }
 
   .tab {
-    padding: 10px 14px;
-    font-size: 16px;
+    padding: 12px 16px;
+    font-size: 15px;
     font-family: 'Pretendard', sans-serif;
     color: var(--text-muted);
     background: none;
@@ -80,17 +93,10 @@
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.15s;
-    letter-spacing: -0.01em;
   }
 
-  .tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
-
-  .tab:hover:not(.active) {
-    color: var(--text-sub);
-  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:hover:not(.active) { color: var(--text-sub); }
 
   main {
     padding: 1.25rem;
@@ -101,98 +107,438 @@
   .section { display: none; }
   .section.visible { display: block; }
 
-  .section-note {
-    font-size: 18px;
+  /* SCRIPT section */
+  .dialogue-intro {
+    font-size: 13px;
     color: var(--text-muted);
     font-family: 'DM Mono', monospace;
     margin-bottom: 1rem;
-    padding: 8px 12px;
+    padding: 10px 12px;
     background: var(--surface);
     border-radius: 8px;
     border-left: 2px solid var(--accent-dim);
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
-  .card {
+  .dialogue-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1rem 1.125rem;
     margin-bottom: 10px;
-    position: relative;
-    transition: border-color 0.15s;
+    display: flex;
+    gap: 12px;
+    align-items: center;
   }
 
-  .card:active {
-    border-color: var(--border);
-    background: var(--surface2);
-  }
-
-  .card-num {
+  .speaker {
     font-family: 'DM Mono', monospace;
-    font-size: 15px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    min-width: 36px;
+    padding-top: 3px;
+    flex-shrink: 0;
   }
 
-  .en {
-    font-size: 22px;
+  .speaker.ken { color: var(--blue); }
+
+  .dialogue-lines { flex: 1; }
+
+  .en-line {
+    font-size: 18px;
     font-weight: 500;
     color: var(--text);
-    line-height: 1.55;
-    margin-bottom: 6px;
+    line-height: 1.6;
+    margin-bottom: 4px;
     letter-spacing: -0.01em;
   }
 
-  .ko {
-    font-size: 20px;
+  .ko-line {
+    font-size: 15px;
     color: var(--text-sub);
-    line-height: 1.55;
-  }
-
-  .tip {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-    font-size: 18px;
-    color: var(--accent-dim);
-    font-family: 'DM Mono', monospace;
     line-height: 1.5;
   }
 
-  .tip::before {
-    content: '→ ';
-    color: var(--accent);
+  /* TTS */
+  .dialogue-card {
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .dialogue-card:active { background: var(--surface2); }
+  .dialogue-card.playing {
+    border-color: var(--accent-dim);
+    background: rgba(200,240,128,0.05);
   }
 
-  .copy-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
+  .tts-btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     background: var(--tag);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+
+  .tts-btn.playing {
+    background: var(--accent);
+    border-color: var(--accent);
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.12); opacity: 0.8; }
+  }
+
+  .tts-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .tts-speed-label {
     font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .tts-speed-btn {
+    padding: 3px 9px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--tag);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
     color: var(--text-muted);
     cursor: pointer;
     transition: all 0.15s;
   }
 
-  .copy-btn:active {
+  .tts-speed-btn.active {
     background: var(--accent);
     color: #000;
     border-color: var(--accent);
   }
 
-  .copy-btn.copied {
-    background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
+  .keypoint-box { cursor: pointer; transition: border-color 0.15s; }
+  .keypoint-box:active { border-color: var(--accent); }
+
+  /* KEY POINT */
+  .keypoint-box {
+    background: var(--surface);
+    border: 1px solid var(--accent-dim);
+    border-radius: 12px;
+    padding: 1.125rem;
+    margin-bottom: 10px;
   }
 
+  .keypoint-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  .keypoint-en {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .keypoint-ko {
+    font-size: 16px;
+    color: var(--text-sub);
+  }
+
+  /* VOCAB */
+  .vocab-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.125rem;
+    margin-bottom: 10px;
+  }
+
+  .vocab-word {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 4px;
+  }
+
+  .vocab-ko {
+    font-size: 15px;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+  }
+
+  .vocab-example {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-style: italic;
+    border-left: 2px solid var(--border);
+    padding-left: 10px;
+    line-height: 1.6;
+  }
+
+  .vocab-example .ex-en { color: var(--text-sub); margin-bottom: 2px; }
+  .vocab-example .ex-ko { color: var(--text-muted); font-size: 13px; font-style: normal; }
+
+  /* QUIZ section */
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .quiz-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .quiz-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .quiz-progress-bar-bg {
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .quiz-progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .quiz-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quiz-type-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+
+  .quiz-prompt {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  .quiz-prompt.korean { font-size: 19px; color: var(--text-sub); }
+
+  .reveal-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--tag);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 10px;
+  }
+
+  .reveal-btn:active { background: var(--surface2); }
+
+  .answer-box {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--accent-dim);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .answer-box.shown { display: block; }
+
+  .answer-en {
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1.55;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .answer-ko {
+    font-size: 15px;
+    color: var(--text-sub);
+  }
+
+  .judge-btns {
+    display: none;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .judge-btns.shown { display: flex; }
+
+  .judge-btn {
+    flex: 1;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .judge-btn.correct {
+    background: rgba(200, 240, 128, 0.1);
+    color: var(--accent);
+    border-color: var(--accent-dim);
+  }
+
+  .judge-btn.wrong {
+    background: rgba(255, 107, 107, 0.1);
+    color: var(--red);
+    border-color: var(--red);
+  }
+
+  .judge-btn:active { opacity: 0.7; }
+
+  .quiz-result {
+    display: none;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .quiz-result.shown { display: block; }
+
+  .result-emoji { font-size: 48px; margin-bottom: 12px; }
+
+  .result-score {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .result-msg {
+    font-size: 16px;
+    color: var(--text-sub);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .restart-btn {
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .restart-btn:active { opacity: 0.8; }
+
+  /* NOW YOU TALK */
+  .nyt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.125rem;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .nyt-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .nyt-ko {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  .nyt-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nyt-answer {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .nyt-answer.shown { display: block; }
+
+  .nyt-answer-en {
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  .nyt-tap-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: 8px;
+    text-align: right;
+  }
+
+  /* Progress bar bottom */
   .progress-wrap {
     position: fixed;
     bottom: 0;
@@ -209,7 +555,7 @@
 
   .progress-label {
     font-family: 'DM Mono', monospace;
-    font-size: 16px;
+    font-size: 13px;
     color: var(--text-muted);
     white-space: nowrap;
   }
@@ -229,51 +575,19 @@
     transition: width 0.3s ease;
   }
 
-  .memo-btn {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 10px;
+  .mode-label {
     font-family: 'DM Mono', monospace;
-    font-size: 16px;
-    color: var(--text-muted);
-    cursor: pointer;
+    font-size: 11px;
+    color: var(--accent);
     white-space: nowrap;
-    transition: all 0.15s;
-  }
-
-  .memo-btn:active {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .card.memorized {
-    opacity: 0.45;
-    border-style: dashed;
-  }
-
-  .card.memorized .en {
-    text-decoration: line-through;
-    text-decoration-color: var(--text-muted);
-  }
-
-  .memorized-badge {
-    display: none;
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    color: var(--accent);
-    margin-left: 6px;
-  }
-
-  .card.memorized .memorized-badge {
-    display: inline;
+    letter-spacing: 0.05em;
   }
 
   body { padding-bottom: 60px; }
 
   @media (min-width: 600px) {
-    header { padding: 2.5rem 2rem 1.25rem; }
-    .tabs-wrap { padding: 0 2rem; }
+    header { padding: 2rem 2rem 1.25rem; }
+    .tabs { padding: 0 2rem; }
     main { padding: 1.5rem 2rem; }
   }
 </style>
@@ -281,233 +595,416 @@
 <body>
 
 <header>
-  <div class="header-label">CANADA SURVIVAL ENGLISH</div>
-  <h1>생존 영어 암기<span>/ 상황별 스크립트</span></h1>
+  <div class="header-label">EBS 오디오 어학당</div>
+  <h1>
+    <span class="day">DAY 25 · Thursday</span>
+    Depends on my mood. <span>/ 그때그때 기분에 따라 달라요</span>
+  </h1>
 </header>
 
 <div class="tabs-wrap">
-  <div class="tabs" id="tabs"></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('script')">📖 스크립트</button>
+    <button class="tab" onclick="switchTab('vocab')">📚 단어</button>
+    <button class="tab" onclick="switchTab('quiz')">🧠 퀴즈</button>
+    <button class="tab" onclick="switchTab('talk')">🗣️ 연습</button>
+  </div>
 </div>
 
-<main id="main"></main>
+<main>
+
+  <!-- SCRIPT -->
+  <div class="section visible" id="sec-script">
+    <div class="keypoint-box" onclick="ttsSpeak('Depends on my mood.')">
+      <div class="keypoint-label">이것이 포인트! &nbsp;🔊 탭해서 듣기</div>
+      <div class="keypoint-en">Depends on my mood.</div>
+      <div class="keypoint-ko">그때그때 기분에 따라 달라요.</div>
+    </div>
+
+    <div class="tts-controls">
+      <span class="tts-speed-label">재생 속도</span>
+      <button class="tts-speed-btn" onclick="setSpeed(0.7, this)">0.7×</button>
+      <button class="tts-speed-btn active" onclick="setSpeed(1.0, this)">1.0×</button>
+      <button class="tts-speed-btn" onclick="setSpeed(1.2, this)">1.2×</button>
+      <span class="tts-speed-label" style="margin-left:auto;">🔊 탭해서 듣기</span>
+    </div>
+
+    <div class="dialogue-intro" style="margin-top:10px;">
+      소설과 비소설 중 어느 것을 더 좋아하는지 이야기하는 대화예요.<br>
+      진하게 표시된 단어에 힘을 주어 약간 띄우듯 발음해 보세요.
+    </div>
+
+    <div class="dialogue-card" onclick="ttsCard(0, 'Are you more into fiction or non-fiction?')">
+      <div class="speaker">SUJI</div>
+      <div class="dialogue-lines">
+        <div class="en-line">Are you more into <strong>fiction</strong> or <strong>non-fiction</strong>?</div>
+        <div class="ko-line">소설과 비소설 중에 뭘 더 좋아하세요?</div>
+      </div>
+      <div class="tts-btn" id="tb-0">▶</div>
+    </div>
+
+    <div class="dialogue-card" onclick="ttsCard(1, 'Depends on my mood. You?')">
+      <div class="speaker ken">KEN</div>
+      <div class="dialogue-lines">
+        <div class="en-line"><strong>Depends</strong> on my <strong>mood</strong>. <strong>You</strong>?</div>
+        <div class="ko-line">그때그때 기분에 따라 달라요. 수지 씨는요?</div>
+      </div>
+      <div class="tts-btn" id="tb-1">▶</div>
+    </div>
+
+    <div class="dialogue-card" onclick="ttsCard(2, 'Mostly fiction. I love getting lost in stories.')">
+      <div class="speaker">SUJI</div>
+      <div class="dialogue-lines">
+        <div class="en-line"><strong>Mostly fiction</strong>. I <strong>love getting lost</strong> in <strong>stories</strong>.</div>
+        <div class="ko-line">대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요.</div>
+      </div>
+      <div class="tts-btn" id="tb-2">▶</div>
+    </div>
+
+    <div class="dialogue-card" onclick="ttsCard(3, 'I like biographies. Real lives are fascinating.')">
+      <div class="speaker ken">KEN</div>
+      <div class="dialogue-lines">
+        <div class="en-line">I like <strong>biographies</strong>. <strong>Real lives</strong> are <strong>fascinating</strong>.</div>
+        <div class="ko-line">저는 전기들을 좋아해요. 실제 인생 이야기는 정말 대단하거든요.</div>
+      </div>
+      <div class="tts-btn" id="tb-3">▶</div>
+    </div>
+
+    <div class="dialogue-card" onclick="ttsCard(4, 'We should trade books sometime.')">
+      <div class="speaker">SUJI</div>
+      <div class="dialogue-lines">
+        <div class="en-line">We should <strong>trade books</strong> sometime.</div>
+        <div class="ko-line">우리 언젠가 책을 바꿔 읽어 봐요.</div>
+      </div>
+      <div class="tts-btn" id="tb-4">▶</div>
+    </div>
+  </div>
+
+  <!-- VOCAB -->
+  <div class="section" id="sec-vocab">
+    <div id="vocab-list"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="section" id="sec-quiz">
+    <div id="quiz-area"></div>
+  </div>
+
+  <!-- NOW YOU TALK -->
+  <div class="section" id="sec-talk">
+    <div class="dialogue-intro">
+      한국어를 보고 영어로 말해보세요.<br>
+      카드를 탭하면 정답을 확인할 수 있어요.
+    </div>
+    <div id="talk-list"></div>
+  </div>
+
+</main>
 
 <div class="progress-wrap">
-  <span class="progress-label" id="progress-label">0 / 0 외움</span>
+  <span class="progress-label" id="progress-label">퀴즈 준비</span>
   <div class="progress-bar-bg">
     <div class="progress-bar" id="progress-bar" style="width:0%"></div>
   </div>
-  <button class="memo-btn" id="reset-btn" onclick="resetAll()">초기화</button>
+  <span class="mode-label" id="mode-label">DAY 25</span>
 </div>
 
 <script>
-const data = [
-  {
-    id: "survive",
-    label: "😅 못 알아들을 때",
-    note: "제일 먼저 외워. 이것만 있어도 안 얼어붙어.",
-    items: [
-      { en: "Sorry, could you say that again?", ko: "다시 한번 말씀해 주시겠어요?", tip: "가장 기본. 무조건 외우기" },
-      { en: "Could you speak a little slower, please?", ko: "조금 천천히 말씀해 주시겠어요?", tip: "" },
-      { en: "Sorry, how do you spell that?", ko: "그거 철자가 어떻게 돼요?", tip: "이름, 주소 받아 적을 때 유용" },
-      { en: "Just to confirm, you mean...?", ko: "확인하자면, ...말씀이시죠?", tip: "내가 이해한 게 맞는지 확인할 때" },
-      { en: "Sorry, I didn't quite catch that — could you repeat it?", ko: "잘 못 들었어요, 다시 한번 말씀해 주실 수 있어요?", tip: "catch = 알아듣다 (구어체)" }
-    ]
-  },
-  {
-    id: "house",
-    label: "🏠 집 구하기",
-    note: "쉐어하우스 문의할 때 바로 쓸 수 있는 문장들.",
-    items: [
-      { en: "Hi, I'm calling about the room you posted online. Is it still available?", ko: "안녕하세요, 온라인에 올리신 방 관련해서 연락드려요. 아직 있나요?", tip: "첫 연락 문자/전화 모두 OK" },
-      { en: "How much is the rent per month, and what's included?", ko: "월세가 얼마예요, 그리고 뭐가 포함돼 있어요?", tip: "인터넷, 공과금 포함 여부 꼭 확인" },
-      { en: "Is there a minimum stay requirement?", ko: "최소 거주 기간이 있나요?", tip: "" },
-      { en: "Would it be possible to view the room this week?", ko: "이번 주에 방을 볼 수 있을까요?", tip: "방문 요청할 때" },
-      { en: "Is the deposit refundable at the end of the lease?", ko: "계약 끝나면 보증금 돌려받을 수 있나요?", tip: "deposit = 보증금, 꼭 확인해야 하는 것" }
-    ]
-  },
-  {
-    id: "cafe",
-    label: "☕ 카페 / 식당",
-    note: "일상에서 제일 자주 쓰는 것들.",
-    items: [
-      { en: "Can I get a medium latte, please?", ko: "미디엄 라떼 한 잔 주세요.", tip: "order 말고 get 쓰는 게 더 자연스러워" },
-      { en: "For here or to go? — For here, please. / To go, please.", ko: "여기서 드세요, 포장이에요? — 여기서요 / 포장이요.", tip: "점원이 자주 물어보는 말" },
-      { en: "Could I have that with oat milk instead?", ko: "오트 밀크로 바꿔주실 수 있어요?", tip: "instead 붙이면 변경 요청" },
-      { en: "Do you have any specials today?", ko: "오늘 특별 메뉴 있어요?", tip: "" },
-      { en: "Could I get the bill, please?", ko: "계산서 주세요.", tip: "check도 같은 뜻. Can I get the check?" }
-    ]
-  },
-  {
-    id: "job",
-    label: "💼 잡 인터뷰",
-    note: "서버, 카페 알바 면접에서 자주 나오는 것들.",
-    items: [
-      { en: "I have experience working in a fast-paced environment.", ko: "빠르게 돌아가는 환경에서 일한 경험이 있어요.", tip: "서비스직 면접에서 거의 무조건 나옴" },
-      { en: "I'm available on weekends and evenings — I'm pretty flexible.", ko: "주말이랑 저녁 가능해요 — 시간 조율 잘 돼요.", tip: "스케줄 물어볼 때" },
-      { en: "I'm a quick learner and I'm comfortable working with a team.", ko: "배우는 속도가 빠르고 팀으로 일하는 거 편해요.", tip: "자기소개 단골 문장" },
-      { en: "When would you need someone to start?", ko: "언제부터 일할 사람이 필요하세요?", tip: "면접 마무리에 써도 센스 있어 보여" },
-      { en: "Is there anything else you'd like to know about me?", ko: "저에 대해 더 궁금한 거 있으세요?", tip: "면접 끝날 때 이걸로 마무리" }
-    ]
-  },
-  {
-    id: "hospital",
-    label: "🏥 병원 / 약국",
-    note: "아플 때 당황하지 않으려면 미리 외워둬.",
-    items: [
-      { en: "I'd like to make an appointment with a doctor, please.", ko: "의사 선생님 진료 예약하고 싶어요.", tip: "캐나다는 walk-in clinic도 많아" },
-      { en: "I've had this pain for about a week now.", ko: "이 통증이 한 일주일 됐어요.", tip: "증상 설명 기본 틀" },
-      { en: "It hurts when I press here / when I walk.", ko: "여기를 누르면 / 걸을 때 아파요.", tip: "부위 가리키며 말하면 OK" },
-      { en: "Do I need a prescription for this?", ko: "이거 처방전 필요한가요?", tip: "약국에서 약 살 때" },
-      { en: "I'm allergic to penicillin.", ko: "저 페니실린 알레르기 있어요.", tip: "본인 알레르기로 바꿔서 외워두기" }
-    ]
-  },
-  {
-    id: "bank",
-    label: "🏦 은행",
-    note: "계좌 개설 + 기본 거래.",
-    items: [
-      { en: "I'd like to open a bank account, please.", ko: "계좌 개설하고 싶어요.", tip: "워홀 초반에 제일 먼저 할 일" },
-      { en: "What documents do I need to bring?", ko: "어떤 서류 가져와야 하나요?", tip: "" },
-      { en: "I'd like to deposit this, please.", ko: "이거 입금하고 싶어요.", tip: "deposit = 입금, withdraw = 출금" },
-      { en: "Could I get a bank statement for the last three months?", ko: "최근 3개월 거래 내역서 뽑아주실 수 있어요?", tip: "비자 연장 등에 필요할 수 있어" },
-      { en: "I think there's an error on my account.", ko: "제 계좌에 오류가 있는 것 같아요.", tip: "" }
-    ]
-  },
-  {
-    id: "mart",
-    label: "🛒 마트 / 쇼핑",
-    note: "일상에서 생각보다 많이 쓰는 것들.",
-    items: [
-      { en: "Excuse me, where can I find the dairy section?", ko: "실례합니다, 유제품 코너가 어디예요?", tip: "section 대신 aisle도 자주 씀" },
-      { en: "Do you have this in a different size?", ko: "이거 다른 사이즈 있나요?", tip: "옷, 신발 살 때" },
-      { en: "Can I return this if it doesn't fit?", ko: "사이즈 안 맞으면 반품 되나요?", tip: "캐나다는 반품 정책 관대한 편" },
-      { en: "Do you have a loyalty card / points card?", ko: "포인트 카드 있으세요?", tip: "계산할 때 점원이 자주 물어봄" },
-      { en: "Could I get a bag, please?", ko: "봉투 하나 주시겠어요?", tip: "캐나다 마트는 봉투 유료인 경우 많음" }
-    ]
-  },
-  {
-    id: "small",
-    label: "💬 스몰토크",
-    note: "친해지는 데 진짜 중요해. 어학원 첫 날부터 써먹어.",
-    items: [
-      { en: "How long have you been in Vancouver?", ko: "밴쿠버 온 지 얼마나 됐어요?", tip: "어학원에서 제일 흔한 첫 질문" },
-      { en: "What do you do for fun around here?", ko: "여기서 주로 뭐 하면서 놀아요?", tip: "현지인에게 물어보면 맛집·명소 정보 득템" },
-      { en: "I'm still getting used to the weather here.", ko: "여기 날씨에 아직 적응 중이에요.", tip: "날씨는 만국 공통 스몰토크 주제" },
-      { en: "That sounds like a lot of fun — I'd love to try that sometime.", ko: "재밌겠다 — 나도 언제 한번 해보고 싶다.", tip: "상대방 얘기에 반응할 때" },
-      { en: "Honestly, I'm still figuring things out here, but loving it so far.", ko: "솔직히 아직 적응 중인데, 지금까지는 좋아요.", tip: "새로 왔을 때 쓰기 딱 좋은 문장" }
-    ]
+// ── TTS ENGINE ────────────────────────────────────────
+let ttsSpeed = 1.0;
+let currentTtsIdx = null;
+let ttsUtterance = null;
+
+function setSpeed(rate, btn) {
+  ttsSpeed = rate;
+  document.querySelectorAll('.tts-speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function clearTtsUI() {
+  document.querySelectorAll('.dialogue-card').forEach(c => c.classList.remove('playing'));
+  document.querySelectorAll('.tts-btn').forEach(b => {
+    b.classList.remove('playing');
+    b.textContent = '▶';
+  });
+  currentTtsIdx = null;
+}
+
+function ttsSpeak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  clearTtsUI();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = ttsSpeed;
+
+  // prefer a natural-sounding English voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Karen') || v.name.includes('Google US')));
+  if (preferred) u.voice = preferred;
+
+  window.speechSynthesis.speak(u);
+}
+
+function ttsCard(idx, text) {
+  if (!window.speechSynthesis) {
+    alert('이 브라우저는 음성 재생을 지원하지 않아요.');
+    return;
   }
+
+  const btn = document.getElementById('tb-' + idx);
+  const cards = document.querySelectorAll('.dialogue-card');
+  const card = cards[idx];
+
+  // if already playing this card, stop
+  if (currentTtsIdx === idx) {
+    window.speechSynthesis.cancel();
+    clearTtsUI();
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  clearTtsUI();
+
+  currentTtsIdx = idx;
+  card.classList.add('playing');
+  btn.classList.add('playing');
+  btn.textContent = '■';
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = ttsSpeed;
+
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Karen') || v.name.includes('Google US')));
+  if (preferred) u.voice = preferred;
+
+  u.onend = () => { clearTtsUI(); };
+  u.onerror = () => { clearTtsUI(); };
+
+  ttsUtterance = u;
+  window.speechSynthesis.speak(u);
+}
+
+// voices may load async on some browsers
+window.speechSynthesis.onvoiceschanged = () => {};
+
+// ── DATA ──────────────────────────────────────────────
+const dialogue = [
+  { speaker: 'Suji', en: 'Are you more into fiction or non-fiction?', ko: '소설과 비소설 중에 뭘 더 좋아하세요?' },
+  { speaker: 'Ken',  en: 'Depends on my mood. You?', ko: '그때그때 기분에 따라 달라요. 수지 씨는요?' },
+  { speaker: 'Suji', en: 'Mostly fiction. I love getting lost in stories.', ko: '대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요.' },
+  { speaker: 'Ken',  en: 'I like biographies. Real lives are fascinating.', ko: '저는 전기들을 좋아해요. 실제 인생 이야기는 정말 대단하거든요.' },
+  { speaker: 'Suji', en: 'We should trade books sometime.', ko: '우리 언젠가 책을 바꿔 읽어 봐요.' },
 ];
 
-let memorized = JSON.parse(localStorage.getItem('memorized') || '{}');
-let currentSection = data[0].id;
+const vocabData = [
+  { word: 'non-fiction', ko: '비소설', exEn: '', exKo: '' },
+  { word: 'depends on', ko: '~에 달려 있다, ~에 따라 달라지다', exEn: 'That depends on the weather that day.', exKo: '그건 그날의 날씨에 달려 있죠.' },
+  { word: 'mood', ko: '분위기, 전반적인 기분', exEn: 'Is he in a good mood today?', exKo: '그분은 오늘 기분이 좋으신가요?' },
+  { word: 'getting lost in', ko: '~에 매료되어 푹 빠지게 되는 것', exEn: '', exKo: '' },
+  { word: 'biographies', ko: '(누군가의 생애를 적은) 전기들', exEn: '', exKo: '' },
+  { word: 'trade', ko: '맞바꾸다, 교환하다', exEn: '', exKo: '' },
+  { word: 'fascinating', ko: '정말 대단한, 매혹적인', exEn: '', exKo: '' },
+];
 
-function saveMemorized() {
-  localStorage.setItem('memorized', JSON.stringify(memorized));
-}
+const nowYouTalkData = [
+  { num: 1, ko: '너는 영화와 TV 프로그램 중에 뭐가 더 좋아?', hint: '(movies, TV shows)', en: 'Are you more into movies or TV shows?' },
+  { num: 2, ko: '그건 제 일정에 따라 달라져요.', hint: '(my schedule)', en: 'Depends on my schedule.' },
+  { num: 3, ko: '대개는 코미디요.', hint: '(comedy)', en: 'Mostly comedy.' },
+  { num: 4, ko: '저는 빗속을 거니는 것을 정말 좋아해요.', hint: '(walking in the rain)', en: 'I love walking in the rain.' },
+  { num: 5, ko: '우리 언젠가 회포를 한번 풀어야지요.', hint: '(catch up, sometime)', en: 'We should catch up sometime.' },
+];
 
-function getKey(secId, idx) {
-  return secId + '_' + idx;
-}
+// quiz items = dialogue + vocab flashcard
+const quizItems = dialogue.map(d => ({ type: 'dialogue', ...d }));
 
-function updateProgress() {
-  const total = data.reduce((acc, s) => acc + s.items.length, 0);
-  const done = Object.values(memorized).filter(Boolean).length;
-  document.getElementById('progress-label').textContent = done + ' / ' + total + ' 외움';
-  document.getElementById('progress-bar').style.width = (done / total * 100) + '%';
-}
+// ── VOCAB RENDER ──────────────────────────────────────
+const vocabList = document.getElementById('vocab-list');
+vocabData.forEach(v => {
+  const card = document.createElement('div');
+  card.className = 'vocab-card';
+  card.innerHTML = `
+    <div class="vocab-word">${v.word}</div>
+    <div class="vocab-ko">${v.ko}</div>
+    ${v.exEn ? `<div class="vocab-example"><div class="ex-en">${v.exEn}</div><div class="ex-ko">${v.exKo}</div></div>` : ''}
+  `;
+  vocabList.appendChild(card);
+});
 
-function toggleMemorized(secId, idx) {
-  const key = getKey(secId, idx);
-  memorized[key] = !memorized[key];
-  saveMemorized();
-  const card = document.getElementById('card-' + key);
-  if (memorized[key]) {
-    card.classList.add('memorized');
-    card.querySelector('.memo-btn-card').textContent = '✓ 외움';
-  } else {
-    card.classList.remove('memorized');
-    card.querySelector('.memo-btn-card').textContent = '외웠어';
+// ── NOW YOU TALK RENDER ───────────────────────────────
+const talkList = document.getElementById('talk-list');
+nowYouTalkData.forEach(item => {
+  const card = document.createElement('div');
+  card.className = 'nyt-card';
+  card.innerHTML = `
+    <div class="nyt-num">${String(item.num).padStart(2,'0')} / ${String(nowYouTalkData.length).padStart(2,'0')}</div>
+    <div class="nyt-ko">${item.ko}</div>
+    <div class="nyt-hint">${item.hint}</div>
+    <div class="nyt-answer" id="nyt-ans-${item.num}">
+      <div class="nyt-answer-en">${item.en}</div>
+    </div>
+    <div class="nyt-tap-hint">탭해서 정답 확인</div>
+  `;
+  card.addEventListener('click', () => {
+    const ans = document.getElementById('nyt-ans-' + item.num);
+    const hint = card.querySelector('.nyt-tap-hint');
+    if (ans.classList.contains('shown')) {
+      ans.classList.remove('shown');
+      hint.textContent = '탭해서 정답 확인';
+    } else {
+      ans.classList.add('shown');
+      hint.textContent = '탭해서 접기';
+    }
+  });
+  talkList.appendChild(card);
+});
+
+// ── QUIZ ENGINE ───────────────────────────────────────
+let quizState = { items: [], idx: 0, correct: 0, wrong: 0, revealed: false };
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
+  return a;
+}
+
+function startQuiz() {
+  quizState = {
+    items: shuffleArray(quizItems),
+    idx: 0,
+    correct: 0,
+    wrong: 0,
+    revealed: false
+  };
+  renderQuiz();
   updateProgress();
 }
 
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '복사됨';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = '복사';
-      btn.classList.remove('copied');
-    }, 1500);
-  });
+function renderQuiz() {
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+
+  if (quizState.idx >= quizState.items.length) {
+    renderResult(area);
+    return;
+  }
+
+  const item = quizState.items[quizState.idx];
+  const total = quizState.items.length;
+  const current = quizState.idx + 1;
+
+  area.innerHTML = `
+    <div class="quiz-header">
+      <span class="quiz-counter">${current} / ${total}</span>
+      <span class="quiz-score">✓ ${quizState.correct} &nbsp;✗ ${quizState.wrong}</span>
+    </div>
+    <div class="quiz-progress-bar-bg">
+      <div class="quiz-progress-bar" style="width: ${((current-1)/total)*100}%"></div>
+    </div>
+
+    <div class="quiz-card">
+      <div class="quiz-type-label">한국어 → 영어로 말해보세요</div>
+      <div class="quiz-prompt korean">${item.speaker ? `[${item.speaker}] ` : ''}${item.ko}</div>
+    </div>
+
+    <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()">👁 정답 보기</button>
+
+    <div class="answer-box" id="answer-box">
+      <div class="answer-en">${item.en}</div>
+      ${item.speaker ? `<div class="answer-ko" style="margin-top:4px; font-size:12px; color:var(--text-muted); font-family:'DM Mono',monospace;">${item.speaker.toUpperCase()}</div>` : ''}
+    </div>
+
+    <div class="judge-btns" id="judge-btns">
+      <button class="judge-btn correct" onclick="judge(true)">✓ 맞았어</button>
+      <button class="judge-btn wrong" onclick="judge(false)">✗ 틀렸어</button>
+    </div>
+  `;
 }
 
-function resetAll() {
-  if (confirm('외운 목록을 전부 초기화할까요?')) {
-    memorized = {};
-    saveMemorized();
-    document.querySelectorAll('.card').forEach(c => c.classList.remove('memorized'));
-    document.querySelectorAll('.memo-btn-card').forEach(b => b.textContent = '외웠어');
-    updateProgress();
+function revealAnswer() {
+  document.getElementById('reveal-btn').style.display = 'none';
+  document.getElementById('answer-box').classList.add('shown');
+  document.getElementById('judge-btns').classList.add('shown');
+}
+
+function judge(isCorrect) {
+  if (isCorrect) quizState.correct++;
+  else quizState.wrong++;
+  quizState.idx++;
+  renderQuiz();
+  updateProgress();
+}
+
+function renderResult(area) {
+  const total = quizState.items.length;
+  const pct = Math.round((quizState.correct / total) * 100);
+  let emoji = '😅', msg = '다시 한번 해봐요! 반복이 핵심이에요.';
+  if (pct >= 80) { emoji = '🎉'; msg = '훌륭해요! 오늘 배운 표현 완벽 마스터!'; }
+  else if (pct >= 50) { emoji = '💪'; msg = '절반 이상 맞혔어요. 조금만 더 연습해요!'; }
+
+  area.innerHTML = `
+    <div class="quiz-result shown">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-score">${quizState.correct} / ${total}</div>
+      <div class="result-msg">${msg}<br><br>정확도 ${pct}%</div>
+      <button class="restart-btn" onclick="startQuiz()">다시 풀기</button>
+    </div>
+  `;
+  updateProgress(pct);
+}
+
+function updateProgress(pct) {
+  const label = document.getElementById('progress-label');
+  const bar = document.getElementById('progress-bar');
+
+  if (currentTab === 'quiz') {
+    if (quizState.idx < quizState.items.length) {
+      const done = quizState.correct + quizState.wrong;
+      const total = quizState.items.length;
+      label.textContent = `${done} / ${total} 완료`;
+      bar.style.width = (done / total * 100) + '%';
+    } else {
+      const p = pct || Math.round((quizState.correct / quizState.items.length) * 100);
+      label.textContent = `정확도 ${p}%`;
+      bar.style.width = p + '%';
+    }
+  } else {
+    label.textContent = 'DAY 25';
+    bar.style.width = '0%';
   }
 }
 
+// ── TAB SWITCH ────────────────────────────────────────
+let currentTab = 'script';
+
 function switchTab(id) {
-  currentSection = id;
-  document.querySelectorAll('.tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.id === id);
+  currentTab = id;
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const ids = ['script', 'vocab', 'quiz', 'talk'];
+    t.classList.toggle('active', ids[i] === id);
   });
   document.querySelectorAll('.section').forEach(s => {
     s.classList.toggle('visible', s.id === 'sec-' + id);
   });
+
+  if (id === 'quiz' && quizState.items.length === 0) {
+    startQuiz();
+  }
+
+  updateProgress();
+
+  document.getElementById('mode-label').textContent =
+    id === 'script' ? '📖 스크립트'
+    : id === 'vocab' ? '📚 단어'
+    : id === 'quiz'  ? '🧠 퀴즈'
+    : '🗣️ 연습';
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-const tabsEl = document.getElementById('tabs');
-const mainEl = document.getElementById('main');
-
-data.forEach((sec, si) => {
-  const tab = document.createElement('button');
-  tab.className = 'tab' + (si === 0 ? ' active' : '');
-  tab.dataset.id = sec.id;
-  tab.textContent = sec.label;
-  tab.onclick = () => switchTab(sec.id);
-  tabsEl.appendChild(tab);
-
-  const section = document.createElement('div');
-  section.className = 'section' + (si === 0 ? ' visible' : '');
-  section.id = 'sec-' + sec.id;
-
-  const note = document.createElement('div');
-  note.className = 'section-note';
-  note.textContent = sec.note;
-  section.appendChild(note);
-
-  sec.items.forEach((item, idx) => {
-    const key = getKey(sec.id, idx);
-    const isMemo = !!memorized[key];
-
-    const card = document.createElement('div');
-    card.className = 'card' + (isMemo ? ' memorized' : '');
-    card.id = 'card-' + key;
-
-    card.innerHTML = `
-      <div class="card-num">${String(idx + 1).padStart(2, '0')} / ${String(sec.items.length).padStart(2, '0')}</div>
-      <button class="copy-btn" onclick="copyText('${item.en.replace(/'/g, "\\'")}', this)">복사</button>
-      <div class="en">${item.en}</div>
-      <div class="ko">${item.ko}</div>
-      ${item.tip ? `<div class="tip">${item.tip}</div>` : ''}
-      <div style="margin-top:12px; display:flex; justify-content:flex-end;">
-        <button class="memo-btn memo-btn-card" onclick="toggleMemorized('${sec.id}', ${idx})">${isMemo ? '✓ 외움' : '외웠어'}</button>
-      </div>
-    `;
-
-    section.appendChild(card);
-  });
-
-  mainEl.appendChild(section);
-});
 
 updateProgress();
 </script>
