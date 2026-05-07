@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>EBS Audio Series · Boarding</title>
+<title>EBS 오디오 어학당 · 멀티 챕터</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -30,10 +30,568 @@
     min-height: 100dvh; 
     overscroll-behavior-y: none; 
     -webkit-overflow-scrolling: touch;
-    overflow-x: hidden;
   }
 
-  /* ── INTRO PAGE STYLE ── */
+  header {
+    padding: 2.5rem 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .header-main {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .header-day-select {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--bg);
+    background: var(--text);
+    padding: 4px 24px 4px 10px;
+    border: none;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 16px;
+    cursor: pointer;
+  }
+  .header-day-select:focus { outline: none; }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--text-sub);
+    font-size: 15px;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .tabs-wrap {
+    position: sticky;
+    top: 0;
+    top: env(safe-area-inset-top, 0); 
+    z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tabs {
+    display: flex;
+    padding: 0 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    padding: 16px 0;
+    margin-right: 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+  .tab:hover:not(.active) { color: var(--text-sub); }
+
+  main {
+    padding: 2rem 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  /* ── UI 수정 포인트: 한글 해석 기본 숨김 ── */
+  .ko-line, .keypoint-ko { 
+    display: none; 
+    transition: all 0.2s;
+  }
+
+  /* .show-ko 클래스가 추가되었을 때만 노출 */
+  .dialogue-card.show-ko .ko-line, 
+  .keypoint-box.show-ko .keypoint-ko { 
+    display: block; 
+  }
+
+  .keypoint-box {
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    background: var(--bg);
+  }
+  .keypoint-box:hover { background: var(--accent-light); border-color: var(--accent); }
+
+  .keypoint-inner { flex: 1; }
+
+  .keypoint-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--accent);
+    display: inline-block;
+    padding-bottom: 4px;
+  }
+
+  .keypoint-en {
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .keypoint-ko {
+    font-size: 14px;
+    color: var(--text-sub);
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .keypoint-play {
+    font-size: 14px;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    padding: 4px 8px;
+    border: 1px solid var(--accent);
+  }
+
+  .tts-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .tts-speed-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-sub);
+    margin-right: 8px;
+    text-transform: uppercase;
+  }
+
+  .tts-speed-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border-light);
+    background: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tts-speed-btn.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  .dialogue-intro {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .dialogue-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.15s;
+    margin: 0 -1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .dialogue-card:hover { background: var(--accent-light); }
+  .dialogue-card.playing { background: var(--accent); color: var(--bg); }
+  .dialogue-card.playing .en-line, 
+  .dialogue-card.playing .ko-line, 
+  .dialogue-card.playing .speaker { color: var(--bg); }
+  .dialogue-card.playing .tts-btn { border-color: var(--bg); color: var(--bg); }
+
+  .speaker-col { min-width: 45px; flex-shrink: 0; padding-top: 2px; }
+
+  .speaker {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .speaker.sub-speaker { color: var(--text-muted); }
+
+  .dialogue-lines { flex: 1; }
+
+  .en-line {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  .en-line strong {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+
+  .ko-line {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+    margin-top: 8px;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .tts-btn {
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-light);
+    color: var(--text-sub);
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  /* ── VOCAB ── */
+  .vocab-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .vocab-row:first-child { border-top: 1px solid var(--border); }
+
+  .vocab-word {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+
+  .vocab-ko {
+    font-size: 14px;
+    color: var(--text);
+    font-family: 'Gowun Dodum', sans-serif;
+    margin-bottom: 8px;
+  }
+
+  .vocab-example {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+    padding-left: 12px;
+    border-left: 1px solid var(--border-light);
+  }
+
+  .vocab-example .ex-ko {
+    font-family: 'Gowun Dodum', sans-serif;
+    margin-top: 4px;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .quiz-bar-bg {
+    height: 1px;
+    background: var(--border-light);
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .quiz-bar {
+    position: absolute;
+    top: -1px; left: 0; height: 3px;
+    background: var(--text);
+    transition: width 0.4s ease;
+  }
+
+  .quiz-prompt-box {
+    border: 1px solid var(--border);
+    padding: 2.5rem 1.5rem;
+    margin-bottom: 16px;
+    text-align: center;
+    background: var(--bg);
+  }
+
+  .quiz-type-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .quiz-prompt {
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.6;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .reveal-btn {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid var(--text);
+    background: var(--text);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
+  }
+  .reveal-btn:hover { background: var(--bg); color: var(--text); }
+
+  .answer-box {
+    display: none;
+    border: 1px solid var(--accent);
+    padding: 2rem 1.5rem;
+    margin-bottom: 16px;
+    text-align: center;
+    background: var(--accent-light);
+  }
+  .answer-box.shown { display: block; }
+
+  .answer-en {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--accent);
+    line-height: 1.6;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .judge-btns {
+    display: none;
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .judge-btns.shown { display: flex; }
+
+  .judge-btn {
+    flex: 1;
+    padding: 16px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .judge-btn:hover { background: var(--text); color: var(--bg); }
+  .judge-btn.wrong:hover { background: var(--red); border-color: var(--red); color: var(--bg); }
+
+  /* ── RESULT ── */
+  .quiz-result { display: none; text-align: center; padding: 4rem 1rem; border: 1px solid var(--border); }
+  .quiz-result.shown { display: block; }
+
+  .result-score {
+    font-size: 64px;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .result-pct {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .result-msg {
+    font-size: 15px;
+    color: var(--text-sub);
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .restart-btn {
+    padding: 14px 32px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .restart-btn:hover { background: var(--text); color: var(--bg); }
+
+  /* ── NOW YOU TALK ── */
+  .nyt-intro {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 1.5rem;
+    font-family: 'Gowun Dodum', sans-serif;
+    line-height: 1.6;
+  }
+
+  .nyt-card {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+  }
+  .nyt-card:first-of-type { border-top: 1px solid var(--border); }
+
+  .nyt-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+
+  .nyt-num { font-size: 11px; letter-spacing: 0.1em; color: var(--text-sub); }
+  .nyt-tap-hint { font-size: 10px; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase; }
+
+  .nyt-ko {
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.6;
+    font-family: 'Gowun Dodum', sans-serif;
+    margin-bottom: 8px;
+  }
+
+  .nyt-hint { font-size: 13px; color: var(--text-muted); }
+
+  .nyt-answer {
+    display: none;
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+  .nyt-answer.shown { display: block; }
+
+  .nyt-answer-en {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 0 1.5rem;
+    padding-bottom: env(safe-area-inset-bottom, 0); 
+    height: calc(56px + env(safe-area-inset-bottom, 0)); 
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+  }
+
+  .bottom-label {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    white-space: nowrap;
+    text-transform: uppercase;
+    min-width: 50px;
+  }
+
+  .bottom-bar-track {
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+    position: relative;
+  }
+
+  .bottom-bar-fill {
+    position: absolute;
+    top: -1px; left: 0; height: 3px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .bottom-tag {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text-sub);
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  body { 
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0)); 
+  }
+
+  /* =========================================
+     새로 추가된 인트로(티켓) 페이지 전용 스타일 
+     ========================================= */
   #intro-page {
     position: fixed;
     inset: 0;
@@ -52,6 +610,7 @@
   }
 
   .intro-eyebrow {
+    font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.2em;
     color: var(--text-muted);
@@ -85,7 +644,6 @@
     box-shadow: 0 20px 40px rgba(0,0,0,0.08);
   }
 
-  /* 티켓 절취선 디자인 */
   .ticket::before, .ticket::after {
     content: '';
     position: absolute;
@@ -109,6 +667,7 @@
   }
 
   .ticket-day {
+    font-family: 'DM Mono', monospace;
     font-size: 10px;
     color: var(--accent);
     letter-spacing: 0.1em;
@@ -116,10 +675,12 @@
   }
 
   .ticket-title {
+    font-family: 'DM Mono', monospace;
     font-size: 18px;
     font-weight: 400;
     line-height: 1.4;
     word-break: keep-all;
+    color: var(--text);
   }
 
   .ticket-title em {
@@ -135,71 +696,23 @@
     margin-top: 8px;
     display: flex;
     justify-content: space-between;
+    font-family: 'DM Mono', monospace;
     font-size: 9px;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
-  /* ── MAIN UI (HIDDEN INITIALLY) ── */
+  /* 인트로 띄울 동안 뒤에 있는 메인 화면을 감추는 용도 */
   #main-ui {
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.8s ease;
   }
   #main-ui.visible {
     opacity: 1;
+    pointer-events: auto;
   }
-
-  /* ── EXISTING STYLES ── */
-  header { padding: 2.5rem 1.5rem 1.5rem; border-bottom: 1px solid var(--border); }
-  .header-eyebrow { font-size: 11px; letter-spacing: 0.1em; color: var(--text-sub); text-transform: uppercase; margin-bottom: 12px; }
-  .header-main { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .header-day-select { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--bg); background: var(--text); padding: 4px 24px 4px 10px; border: none; text-transform: uppercase; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 4px center; background-size: 16px; cursor: pointer; }
-  h1 { font-size: 20px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.4; color: var(--text); }
-  h1 em { font-style: normal; color: var(--text-sub); font-size: 15px; font-family: 'Gowun Dodum', sans-serif; }
-  .tabs-wrap { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
-  .tabs { display: flex; padding: 0 1.5rem; overflow-x: auto; scrollbar-width: none; }
-  .tab { padding: 16px 0; margin-right: 32px; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; }
-  .tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
-  main { padding: 2rem 1.5rem; max-width: 600px; margin: 0 auto; }
-  .section { display: none; }
-  .section.visible { display: block; }
-  .ko-line, .keypoint-ko { display: none; }
-  .dialogue-card.show-ko .ko-line, .keypoint-box.show-ko .keypoint-ko { display: block; }
-  .keypoint-box { border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 2rem; cursor: pointer; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; background: var(--bg); }
-  .keypoint-label { font-size: 10px; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid var(--accent); display: inline-block; padding-bottom: 4px; }
-  .keypoint-en { font-size: 24px; color: var(--text); margin-bottom: 8px; }
-  .keypoint-ko { font-size: 14px; color: var(--text-sub); font-family: 'Gowun Dodum', sans-serif; }
-  .dialogue-card { display: flex; align-items: flex-start; gap: 16px; padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); cursor: pointer; margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-  .speaker { font-size: 11px; color: var(--accent); text-transform: uppercase; }
-  .speaker.sub-speaker { color: var(--text-muted); }
-  .en-line { font-size: 16px; line-height: 1.6; }
-  .en-line strong { font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
-  .ko-line { font-size: 13px; color: var(--text-sub); margin-top: 8px; font-family: 'Gowun Dodum', sans-serif; }
-  .tts-btn { flex-shrink: 0; font-size: 11px; padding: 4px 8px; border: 1px solid var(--border-light); color: var(--text-sub); text-transform: uppercase; }
-  .vocab-row { display: flex; flex-direction: column; gap: 8px; padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); }
-  .vocab-word { font-size: 18px; color: var(--accent); }
-  .vocab-ko { font-size: 14px; font-family: 'Gowun Dodum', sans-serif; }
-  .quiz-meta { display: flex; justify-content: space-between; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; }
-  .quiz-bar-bg { height: 1px; background: var(--border-light); margin-bottom: 2rem; position: relative; }
-  .quiz-bar { position: absolute; top: -1px; left: 0; height: 3px; background: var(--text); transition: width 0.4s; }
-  .quiz-prompt-box { border: 1px solid var(--border); padding: 2.5rem 1.5rem; text-align: center; margin-bottom: 16px; }
-  .reveal-btn { width: 100%; padding: 16px; background: var(--text); color: var(--bg); border: none; font-family: 'DM Mono'; text-transform: uppercase; cursor: pointer; }
-  .answer-box { display: none; border: 1px solid var(--accent); padding: 2rem 1.5rem; text-align: center; background: var(--accent-light); margin-bottom: 16px; }
-  .answer-box.shown { display: block; }
-  .answer-en { font-size: 20px; color: var(--accent); margin-bottom: 12px; }
-  .judge-btns { display: none; gap: 12px; }
-  .judge-btns.shown { display: flex; }
-  .judge-btn { flex: 1; padding: 16px; border: 1px solid var(--border); background: var(--bg); font-family: 'DM Mono'; text-transform: uppercase; cursor: pointer; }
-  .nyt-card { padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); cursor: pointer; }
-  .nyt-ko { font-size: 18px; font-family: 'Gowun Dodum', sans-serif; margin-bottom: 8px; }
-  .nyt-answer { display: none; margin-top: 16px; padding: 16px; border: 1px solid var(--accent); color: var(--accent); }
-  .nyt-answer.shown { display: block; }
-  .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--border); padding: 0 1.5rem; height: 56px; display: flex; align-items: center; gap: 20px; z-index: 100; }
-  .bottom-label { font-size: 11px; color: var(--text); text-transform: uppercase; min-width: 50px; }
-  .bottom-bar-track { flex: 1; height: 1px; background: var(--border-light); position: relative; }
-  .bottom-bar-fill { position: absolute; top: -1px; left: 0; height: 3px; background: var(--accent); transition: width 0.3s; }
-  body { padding-bottom: 70px; }
 </style>
 </head>
 <body>
@@ -218,7 +731,7 @@
         <option value="25">Day 25</option>
         <option value="23">Day 23</option>
       </select>
-      <h1 id="main-title">Loading...</h1>
+      <h1 id="main-title">Depends on my mood. <br><em>그때그때 기분에 따라 달라요</em></h1>
     </div>
   </header>
 
@@ -236,13 +749,13 @@
     <div class="section" id="sec-vocab"><div id="vocab-list"></div></div>
     <div class="section" id="sec-quiz"><div id="quiz-area"></div></div>
     <div class="section" id="sec-talk">
-      <div class="nyt-intro">한국어를 보고 영어로 말해보세요.</div>
+      <div class="nyt-intro">한국어를 보고 영어로 말해보세요. 카드를 탭하면 정답을 확인할 수 있어요.</div>
       <div id="talk-list"></div>
     </div>
   </main>
 
   <div class="bottom-bar">
-    <span class="bottom-label" id="bottom-label">Ready</span>
+    <span class="bottom-label" id="bottom-label">Day 25</span>
     <div class="bottom-bar-track">
       <div class="bottom-bar-fill" id="bottom-fill" style="width:0%"></div>
     </div>
@@ -251,11 +764,13 @@
 </div>
 
 <script>
-// ── DATA: 기존 데이터 100% 보존 ──
+// ── DATA: 올려주신 최신 데이터 100% 원본 그대로 유지 ──
 const appData = {
   25: {
-    titleEn: "Depends on my mood.", titleKo: "그때그때 기분에 따라 달라요",
-    pointEn: "Depends on my mood.", pointKo: "그때그때 기분에 따라 달라요.",
+    titleEn: "Depends on my mood.",
+    titleKo: "그때그때 기분에 따라 달라요",
+    pointEn: "Depends on my mood.",
+    pointKo: "그때그때 기분에 따라 달라요.",
     dialogue: [
       { speaker: 'Suji', enHtml: 'Are you more into <strong>fiction</strong> or <strong>non-fiction</strong>?', en: 'Are you more into fiction or non-fiction?', ko: '소설과 비소설 중에 뭘 더 좋아하세요?' },
       { speaker: 'Ken', isSub: true, enHtml: '<strong>Depends</strong> on my <strong>mood</strong>. You?', en: 'Depends on my mood. You?', ko: '그때그때 기분에 따라 달라요. 수지 씨는요?' },
@@ -266,26 +781,46 @@ const appData = {
     vocabData: [
       { word: 'non-fiction', ko: '비소설', exEn: '', exKo: '' },
       { word: 'depends on', ko: '~에 달려 있다, ~에 따라 달라지다', exEn: 'That depends on the weather that day.', exKo: '그건 그날의 날씨에 달려 있죠.' },
-      { word: 'mood', ko: '분위기, 전반적인 기분', exEn: 'Is he in a good mood today?', exKo: '그분은 오늘 기분이 좋으신가요?' }
+      { word: 'mood', ko: '분위기, 전반적인 기분', exEn: 'Is he in a good mood today?', exKo: '그분은 오늘 기분이 좋으신가요?' },
+      { word: 'getting lost in', ko: '~에 매료되어 푹 빠지게 되는 것', exEn: '', exKo: '' },
+      { word: 'biographies', ko: '(누군가의 생애를 적은) 전기들', exEn: '', exKo: '' },
+      { word: 'trade', ko: '맞바꾸다, 교환하다', exEn: '', exKo: '' },
+      { word: 'fascinating', ko: '정말 대단한, 매혹적인', exEn: '', exKo: '' }
     ],
     nowYouTalkData: [
       { num: 1, ko: '너는 영화와 TV 프로그램 중에 뭐가 더 좋아?', hint: '(movies, TV shows)', en: 'Are you more into movies or TV shows?' },
-      { num: 2, ko: '그건 제 일정에 따라 달라져요.', hint: '(my schedule)', en: 'Depends on my schedule.' }
+      { num: 2, ko: '그건 제 일정에 따라 달라져요.', hint: '(my schedule)', en: 'Depends on my schedule.' },
+      { num: 3, ko: '대개는 코미디요.', hint: '(comedy)', en: 'Mostly comedy.' },
+      { num: 4, ko: '저는 빗속을 거니는 것을 정말 좋아해요.', hint: '(walking in the rain)', en: 'I love walking in the rain.' },
+      { num: 5, ko: '우리 언젠가 회포를 한번 풀어야지요.', hint: '(catch up, sometime)', en: 'We should catch up sometime.' }
     ]
   },
   23: {
-    titleEn: "The spicy ones.", titleKo: "매운 거.",
-    pointEn: "The spicy ones.", pointKo: "매운 거.",
+    titleEn: "The spicy ones.",
+    titleKo: "매운 거.",
+    pointEn: "The spicy ones.",
+    pointKo: "매운 거.",
     dialogue: [
       { speaker: 'Kelly', enHtml: 'What <strong>kind of</strong> chips do you want?', en: 'What kind of chips do you want?', ko: '어떤 칩스가 좋아?' },
-      { speaker: 'Ben', isSub: true, enHtml: "The <strong>spicy</strong> ones. I think they're in the red bag.", en: "The spicy ones. I think they're in the red bag.", ko: '매운 거. 그거 빨간색 봉지에 들어 있는 것 같아.' }
+      { speaker: 'Ben', isSub: true, enHtml: "The <strong>spicy</strong> ones. I think they're in the red bag.", en: "The spicy ones. I think they're in the red bag.", ko: '매운 거. 그거 빨간색 봉지에 들어 있는 것 같아.' },
+      { speaker: 'Kelly', enHtml: 'There are three red ones. <strong>Which</strong>?', en: 'There are three red ones. Which?', ko: '빨간 게 세 봉지가 있는데. 어떤 거?' },
+      { speaker: 'Ben', isSub: true, enHtml: 'The one just <strong>behind</strong> the big blue bag of popcorn.', en: 'The one just behind the big blue bag of popcorn.', ko: '저 큰 사이즈 파란색 팝콘 봉지 바로 뒤에 있는 거.' },
+      { speaker: 'Kelly', enHtml: "Got it. Hope they're <strong>as spicy as last time</strong>!", en: "Got it. Hope they're as spicy as last time!", ko: '알았어. 지난번만큼 매운맛이면 좋겠다!' }
     ],
     vocabData: [
       { word: 'what kind of', ko: '어떤 종류의', exEn: 'What kind of music do you enjoy?', exKo: '넌 어떤 음악을 즐겨 듣니?' },
-      { word: 'spicy', ko: '매운맛인', exEn: 'This kimchi might be a little spicy for you.', exKo: '이 김치는 너에게 좀 매울 수 있어.' }
+      { word: 'spicy', ko: '매운맛인', exEn: 'This kimchi might be a little spicy for you.', exKo: '이 김치는 너에게 좀 매울 수 있어.' },
+      { word: 'which', ko: '(그중에) 어느 (것)', exEn: '', exKo: '' },
+      { word: 'behind', ko: '~의 뒤에', exEn: "I'm standing right behind you.", exKo: '나 지금 너 바로 뒤에 서 있어.' },
+      { word: 'as spicy as', ko: '~만큼 매운, ~ 정도로 매운', exEn: '', exKo: '' },
+      { word: 'last time', ko: '(같은 경험을 했던) 지난번', exEn: '', exKo: '' }
     ],
     nowYouTalkData: [
-      { num: 1, ko: '어떤 커피를 원해요?', hint: '(coffee)', en: 'What kind of coffee do you want?' }
+      { num: 1, ko: '어떤 커피를 원해요?', hint: '(coffee)', en: 'What kind of coffee do you want?' },
+      { num: 2, ko: '그것들이 검은색 서랍 속에 있는 것 같은데요.', hint: '(the black drawer)', en: "I think they're inside the black drawer." },
+      { num: 3, ko: '파란 것이 네 개 있어요.', hint: '(four blue ones)', en: 'There are four blue ones.' },
+      { num: 4, ko: '입구 바로 옆에 있는 거예요.', hint: '(next to the entrance)', en: 'The one just next to the entrance.' },
+      { num: 5, ko: '그것들이 어제만큼 싱싱하면 좋겠어요.', hint: '(fresh, yesterday)', en: "Hope they're as fresh as yesterday." }
     ]
   }
 };
@@ -293,7 +828,9 @@ const appData = {
 let currentDay = '25';
 let quizItems = [];
 
-// ── INTRO & TICKET LOGIC ──────────────────────────────
+// =========================================
+// 새로 추가된 인트로(티켓) 및 시작 로직
+// =========================================
 function initIntro() {
   const container = document.getElementById('ticket-list');
   container.innerHTML = '';
@@ -312,7 +849,7 @@ function initIntro() {
       </div>
     `;
 
-    // 3D Tilt 인터랙션 추가
+    // 마우스 움직임에 따른 3D 기울기 효과 (마이크로 인터랙션)
     ticket.addEventListener('mousemove', (e) => {
       const rect = ticket.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -344,7 +881,7 @@ function startApp(day) {
   main.classList.add('visible');
 }
 
-// ── RENDER ENGINE (기존 로직 유지) ──────────────────────
+// ── RENDER ENGINE (기존 로직 원본) ──────────────────────
 function loadDay(day) {
   currentDay = day;
   const data = appData[day];
@@ -363,7 +900,15 @@ function loadDay(day) {
       </div>
       <div class="keypoint-play" onclick="event.stopPropagation(); ttsSpeak('${data.pointEn.replace(/'/g, "\\'")}')">PLAY</div>
     </div>
-    <div class="dialogue-intro">카드를 탭하면 해석이 열립니다. 음성은 PLAY 버튼을 눌러주세요.</div>
+
+    <div class="tts-controls">
+      <span class="tts-speed-label">Speed</span>
+      <button class="tts-speed-btn" onclick="setSpeed(0.7, this)">0.7x</button>
+      <button class="tts-speed-btn active" onclick="setSpeed(1.0, this)">1.0x</button>
+      <button class="tts-speed-btn" onclick="setSpeed(1.2, this)">1.2x</button>
+    </div>
+
+    <div class="dialogue-intro">카드를 탭하면 해석이 열립니다. 음성은 우측 PLAY 버튼을 눌러주세요.</div>
   `;
 
   data.dialogue.forEach((d, idx) => {
@@ -385,7 +930,11 @@ function loadDay(day) {
   data.vocabData.forEach(v => {
     const row = document.createElement('div');
     row.className = 'vocab-row';
-    row.innerHTML = `<div class="vocab-word">${v.word}</div><div class="vocab-ko">${v.ko}</div>`;
+    row.innerHTML = `
+      <div class="vocab-word">${v.word}</div>
+      <div class="vocab-ko">${v.ko}</div>
+      ${v.exEn ? `<div class="vocab-example"><div>${v.exEn}</div><div class="ex-ko">${v.exKo}</div></div>` : ''}
+    `;
     vocabList.appendChild(row);
   });
 
@@ -395,52 +944,203 @@ function loadDay(day) {
     const card = document.createElement('div');
     card.className = 'nyt-card';
     card.innerHTML = `
-      <div class="nyt-top"><div class="nyt-num">NO.${String(item.num).padStart(2,'0')}</div></div>
+      <div class="nyt-top">
+        <div class="nyt-num">NO.${String(item.num).padStart(2,'0')}</div>
+        <div class="nyt-tap-hint" id="nyt-hint-${item.num}">TAP TO REVEAL</div>
+      </div>
       <div class="nyt-ko">${item.ko}</div>
-      <div class="nyt-answer" id="nyt-ans-${item.num}"><div class="nyt-answer-en">${item.en}</div></div>
+      <div class="nyt-hint">${item.hint}</div>
+      <div class="nyt-answer" id="nyt-ans-${item.num}">
+        <div class="nyt-answer-en">${item.en}</div>
+      </div>
     `;
-    card.addEventListener('click', () => document.getElementById('nyt-ans-' + item.num).classList.toggle('shown'));
+    card.addEventListener('click', () => {
+      const ans = document.getElementById('nyt-ans-' + item.num);
+      const hint = document.getElementById('nyt-hint-' + item.num);
+      const shown = ans.classList.toggle('shown');
+      hint.textContent = shown ? 'CLOSE' : 'TAP TO REVEAL';
+    });
     talkList.appendChild(card);
   });
 
   quizItems = data.dialogue.map(d => ({ speaker: d.speaker, en: d.en, ko: d.ko }));
+  quizState.items = []; 
+  
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  clearTtsUI();
   switchTab('script');
 }
 
-function toggleKo(el) { el.classList.toggle('show-ko'); }
+// ── 로직 분리: 해석 토글 함수 (음성 X) ────────────────────────
+function toggleKo(el) {
+  if (el) el.classList.toggle('show-ko');
+}
 
-// ── TTS & TAB LOGIC (기존과 동일) ──────────────────────
+// ── TTS 로직 (기존 기능 유지, 해석 토글 로직 제거) ────────────────────────
+let ttsSpeed = 1.0;
 let currentTtsIdx = null;
+
+function setSpeed(rate, btn) {
+  ttsSpeed = rate;
+  document.querySelectorAll('.tts-speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
 function clearTtsUI() {
   document.querySelectorAll('.dialogue-card').forEach(c => c.classList.remove('playing'));
-  document.querySelectorAll('.tts-btn').forEach(b => b.textContent = 'PLAY');
+  document.querySelectorAll('.tts-btn').forEach(b => {
+    b.textContent = 'PLAY';
+  });
   currentTtsIdx = null;
 }
+
+function makeUtterance(text) {
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = ttsSpeed;
+  return u;
+}
+
 function ttsSpeak(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   clearTtsUI();
-  window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  window.speechSynthesis.speak(makeUtterance(text));
 }
+
 function ttsCard(idx, text) {
   if (!window.speechSynthesis) return;
   const btn = document.getElementById('tb-' + idx);
   const card = document.querySelectorAll('.dialogue-card')[idx];
-  if (currentTtsIdx === idx) { window.speechSynthesis.cancel(); clearTtsUI(); return; }
-  window.speechSynthesis.cancel(); clearTtsUI();
-  currentTtsIdx = idx; card.classList.add('playing'); btn.textContent = 'STOP';
-  const u = new SpeechSynthesisUtterance(text);
+
+  if (currentTtsIdx === idx) {
+    window.speechSynthesis.cancel();
+    clearTtsUI();
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  clearTtsUI();
+  currentTtsIdx = idx;
+  card.classList.add('playing');
+  btn.textContent = 'STOP';
+
+  const u = makeUtterance(text);
   u.onend = clearTtsUI;
+  u.onerror = clearTtsUI;
   window.speechSynthesis.speak(u);
 }
 
+// ── 이하 퀴즈 및 탭 로직 (기존과 동일) ────────────────────────
+let quizState = { items: [], idx: 0, correct: 0, wrong: 0 };
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  quizState = { items: shuffleArray(quizItems), idx: 0, correct: 0, wrong: 0 };
+  renderQuiz();
+  updateBottom();
+}
+
+function renderQuiz() {
+  const area = document.getElementById('quiz-area');
+  area.innerHTML = '';
+  if (quizState.idx >= quizState.items.length) { renderResult(area); return; }
+  const item = quizState.items[quizState.idx];
+  const total = quizState.items.length;
+  const current = quizState.idx + 1;
+  area.innerHTML = `
+    <div class="quiz-meta">
+      <span>Q.${current} / ${total}</span>
+     <span>CORRECT ${quizState.correct} &middot; WRONG ${quizState.wrong}</span>
+    </div>
+    <div class="quiz-bar-bg"><div class="quiz-bar" style="width:${((current-1)/total)*100}%"></div></div>
+    <div class="quiz-prompt-box">
+      <div class="quiz-type-label">Translate into English</div>
+      <div class="quiz-prompt">${item.ko}</div>
+    </div>
+    <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()">Show Answer</button>
+    <div class="answer-box" id="answer-box">
+      <div class="answer-en">${item.en}</div>
+    </div>
+    <div class="judge-btns" id="judge-btns">
+      <button class="judge-btn correct" onclick="judge(true)">Correct</button>
+      <button class="judge-btn wrong" onclick="judge(false)">Wrong</button>
+    </div>
+  `;
+}
+
+function revealAnswer() {
+  document.getElementById('reveal-btn').style.display = 'none';
+  document.getElementById('answer-box').classList.add('shown');
+  document.getElementById('judge-btns').classList.add('shown');
+}
+
+function judge(isCorrect) {
+  if (isCorrect) quizState.correct++; else quizState.wrong++;
+  quizState.idx++;
+  renderQuiz();
+  updateBottom();
+}
+
+function renderResult(area) {
+  const total = quizState.items.length;
+  const pct = Math.round((quizState.correct / total) * 100);
+  const msg = pct >= 80 ? 'Perfect!' : pct >= 50 ? 'Good Job!' : 'Try Again!';
+  area.innerHTML = `
+    <div class="quiz-result shown">
+      <div class="result-score">${quizState.correct}/${total}</div>
+      <div class="result-pct">Accuracy ${pct}%</div>
+      <div class="result-msg">${msg}</div>
+      <button class="restart-btn" onclick="startQuiz()">Retry</button>
+    </div>
+  `;
+  updateBottom(pct);
+}
+
+let currentTab = 'script';
+const tabIds = ['script', 'vocab', 'quiz', 'talk'];
+const tabLabels = { script: 'Script', vocab: 'Vocab', quiz: 'Quiz', talk: 'Practice' };
+
 function switchTab(id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.innerText.toLowerCase() === id));
+  currentTab = id;
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', tabIds[i] === id));
   document.querySelectorAll('.section').forEach(s => s.classList.toggle('visible', s.id === 'sec-' + id));
+  if (id === 'quiz' && quizState.items.length === 0) startQuiz();
+  updateBottom();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── APP BOOT ──
+function updateBottom(pct) {
+  const label = document.getElementById('bottom-label');
+  const fill = document.getElementById('bottom-fill');
+  const tag = document.getElementById('bottom-tag');
+  tag.textContent = tabLabels[currentTab];
+  if (currentTab === 'quiz') {
+    const done = quizState.correct + quizState.wrong;
+    const total = quizState.items.length || 1;
+    if (quizState.idx < quizState.items.length) {
+      label.textContent = `${done}/${total}`;
+      fill.style.width = (done / total * 100) + '%';
+    } else {
+      const p = pct ?? Math.round((quizState.correct / total) * 100);
+      label.textContent = `${p}%`;
+      fill.style.width = p + '%';
+    }
+  } else {
+    label.textContent = `Day ${currentDay}`;
+    fill.style.width = '0%';
+  }
+}
+
+// 기존에는 바로 loadDay('25')를 실행했지만, 이제는 인트로를 먼저 띄웁니다.
 initIntro();
 </script>
 </body>
