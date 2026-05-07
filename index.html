@@ -583,7 +583,7 @@
   }
 
   /* =========================================
-     [NEW] 감성 타이포그래피 인트로 페이지 스타일
+     [UI 개선] 인트로 타이포그래피 완벽 정렬 & 떨림 방지
      ========================================= */
   #intro-page {
     position: fixed;
@@ -596,8 +596,10 @@
     justify-content: center;
     cursor: pointer;
     overflow: hidden;
-    /* 물 흐르듯 자연스러운 페이드아웃 애니메이션 */
-    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent; /* 모바일 터치 깜빡임 방지 */
+    /* 물 흐르듯 자연스러운 페이드아웃을 위한 opacity 전환 */
+    transition: opacity 0.8s ease-out, visibility 0.8s;
   }
 
   #intro-page.hidden {
@@ -606,40 +608,49 @@
     pointer-events: none;
   }
 
-  /* 배경에 깔리는 거대한 투명 글씨 */
+  /* 배경 글씨를 화면의 완벽한 정중앙에 고정 */
   .intro-bg-text {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-family: 'DM Mono', monospace;
     font-size: 30vw;
     font-weight: 500;
-    color: rgba(0, 0, 0, 0.02);
+    color: rgba(0, 0, 0, 0.03); /* 가시성 살짝 올림 */
     z-index: 1;
     pointer-events: none;
     transition: transform 0.1s ease-out;
     white-space: nowrap;
   }
 
-  /* 메인 타이포그래피: 한 줄로 나오도록 수정됨 */
+  /* 메인 타이포그래피 한 줄 고정 및 정렬 */
   .intro-typo {
+    position: relative;
     font-family: 'DM Mono', monospace;
-    font-size: clamp(1.5rem, 7vw, 4.5rem); /* 모바일에서도 한 줄에 맞게 폰트 크기 조정 */
+    font-size: clamp(1.5rem, 7vw, 4.5rem);
     font-weight: 300;
     color: var(--text);
     line-height: 1.1;
     text-align: center;
     letter-spacing: -0.03em;
-    white-space: nowrap; /* 줄바꿈 금지 */
+    white-space: nowrap; 
     z-index: 2;
     transition: text-shadow 0.1s ease-out, transform 0.1s ease-out;
   }
 
+  /* 서브 텍스트를 absolute로 하단에 박아서 
+     메인 타이포의 수직/수평 정렬에 영향을 주지 않도록 완벽하게 분리 */
   .intro-sub {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.2em;
     color: var(--accent);
     text-transform: uppercase;
-    margin-top: 4rem;
     z-index: 2;
     animation: pulse 2.5s infinite;
   }
@@ -649,10 +660,11 @@
     50% { opacity: 1; }
   }
 
+  /* 메인 UI 전환 시 부드럽게 나타나도록 처리 */
   #main-ui {
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.8s ease-out;
   }
   #main-ui.visible {
     opacity: 1;
@@ -664,7 +676,8 @@
 
 <div id="intro-page" onclick="startApp('25')">
   <div class="intro-bg-text" id="bg-text">EBS</div>
-  <h1 class="intro-typo" id="main-typo">EBS Audio Series.</h1> <p class="intro-sub">Tap Anywhere to Start</p>
+  <h1 class="intro-typo" id="main-typo">EBS Audio Series.</h1>
+  <p class="intro-sub">Tap Anywhere to Start</p>
 </div>
 
 <div id="main-ui">
@@ -775,44 +788,49 @@ let currentDay = '25';
 let quizItems = [];
 
 // =========================================
-// 감성 타이포그래피 마우스 인터랙션
+// 마우스 인터랙션 및 모바일 레이아웃 최적화
 // =========================================
 const introPage = document.getElementById('intro-page');
 const typo = document.getElementById('main-typo');
 const bgText = document.getElementById('bg-text');
 
-// PC 환경: 마우스를 움직이면 글씨와 그림자가 미세하게 움직임
+// PC 환경에서 마우스 반응형 움직임 (배경은 -50%를 기준으로 계산)
 introPage.addEventListener('mousemove', (e) => {
   const x = (e.clientX / window.innerWidth) - 0.5;
   const y = (e.clientY / window.innerHeight) - 0.5;
   
-  // 메인 글씨는 살짝 밀리고, 포인트 컬러(블루) 그림자가 생김
   typo.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
   typo.style.textShadow = `${x * 40}px ${y * 40}px 30px rgba(0, 51, 255, 0.3)`;
   
-  // 배경 투명 글씨는 반대 방향으로 조금 더 크게 움직임
-  bgText.style.transform = `translate(${x * 50}px, ${y * 50}px)`;
+  bgText.style.transform = `translate(calc(-50% + ${x * 50}px), calc(-50% + ${y * 50}px))`;
 });
 
-// 마우스가 화면을 벗어나면 제자리로 복귀
 introPage.addEventListener('mouseleave', () => {
   typo.style.transform = `translate(0, 0)`;
   typo.style.textShadow = `none`;
-  bgText.style.transform = `translate(0, 0)`;
+  bgText.style.transform = `translate(-50%, -50%)`;
 });
 
-// 화면 탭 시 메인 앱 실행 (부드러운 페이드아웃)
+// 화면 탭 시 모바일 흔들림(Layout Shift) 방지를 위한 비동기 처리
 function startApp(day) {
   const intro = document.getElementById('intro-page');
   const main = document.getElementById('main-ui');
   
+  if (intro.classList.contains('hidden')) return; // 중복 탭 방지
+  
+  // 데이터 렌더링 먼저 실행 (이때 스크롤바가 생길 수 있음)
   loadDay(day);
   
-  intro.classList.add('hidden');
-  main.classList.add('visible');
+  // DOM이 늘어나서 레이아웃이 잡힐 수 있는 아주 짧은 시간(50ms)을 준 뒤 페이드아웃 실행
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      intro.classList.add('hidden');
+      main.classList.add('visible');
+    }, 50);
+  });
 }
 
-// ── RENDER ENGINE (기존 로직 원본 그대로 유지) ──────────────────────
+// ── RENDER ENGINE ──────────────────────
 function loadDay(day) {
   currentDay = day;
   const data = appData[day];
