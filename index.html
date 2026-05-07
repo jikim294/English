@@ -7,21 +7,18 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>EBS 오디오 어학당 · Day 25</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e0e0e;
-    --surface: #181818;
-    --surface2: #222222;
-    --border: #2e2e2e;
-    --text: #f0ede8;
-    --text-sub: #888;
-    --text-muted: #555;
-    --accent: #c8f080;
-    --accent-dim: #8aab45;
-    --tag: #2a2a2a;
-    --red: #ff6b6b;
-    --blue: #80c8f0;
+    --bg: #ffffff;
+    --text: #111111;
+    --text-sub: #666666;
+    --text-muted: #999999;
+    --border: #111111; /* 노트처럼 선명한 블랙 라인 */
+    --border-light: #e0e0e0;
+    --accent: #0033FF; /* 포인트 컬러: 쨍한 블루 */
+    --accent-light: #f0f4ff;
+    --red: #ff3333;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -29,80 +26,98 @@
   html, body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Pretendard', -apple-system, sans-serif;
+    font-family: 'DM Mono', monospace;
     min-height: 100vh;
     overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
   }
 
+  /* ── HEADER ── */
   header {
-    padding: 1.5rem 1.25rem 1rem;
+    padding: 2.5rem 1.5rem 1.5rem;
     border-bottom: 1px solid var(--border);
   }
 
-  .header-label {
-    font-family: 'DM Mono', monospace;
+  .header-eyebrow {
     font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 0.15em;
-    margin-bottom: 5px;
+    letter-spacing: 0.1em;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .header-main {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .header-day {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--bg);
+    background: var(--text);
+    padding: 4px 10px;
+    flex-shrink: 0;
+    text-transform: uppercase;
   }
 
   h1 {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-  }
-
-  h1 .day {
-    color: var(--accent);
-    font-size: 14px;
-    font-family: 'DM Mono', monospace;
+    font-size: 20px;
     font-weight: 400;
-    display: block;
-    margin-bottom: 3px;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+    color: var(--text);
   }
 
-  h1 span { color: var(--text-sub); font-weight: 400; }
+  h1 em {
+    font-style: normal;
+    color: var(--text-sub);
+    font-size: 15px;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
 
-  /* TABS */
+  /* ── TABS ── */
   .tabs-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
     position: sticky;
     top: 0;
     z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
   }
-  .tabs-wrap::-webkit-scrollbar { display: none; }
 
   .tabs {
     display: flex;
-    gap: 0;
-    width: max-content;
-    padding: 0 1.25rem;
+    padding: 0 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
+  .tabs::-webkit-scrollbar { display: none; }
 
   .tab {
-    padding: 12px 16px;
-    font-size: 15px;
-    font-family: 'Pretendard', sans-serif;
+    padding: 16px 0;
+    margin-right: 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: var(--text-muted);
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.15s;
+    transition: all 0.2s;
   }
 
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
   .tab:hover:not(.active) { color: var(--text-sub); }
 
+  /* ── MAIN ── */
   main {
-    padding: 1.25rem;
+    padding: 2rem 1.5rem;
     max-width: 600px;
     margin: 0 auto;
   }
@@ -110,613 +125,573 @@
   .section { display: none; }
   .section.visible { display: block; }
 
-  /* SCRIPT section */
-  .dialogue-intro {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 1rem;
-    padding: 10px 12px;
-    background: var(--surface);
-    border-radius: 8px;
-    border-left: 2px solid var(--accent-dim);
-    line-height: 1.6;
-  }
-
-  .dialogue-card {
-    background: var(--surface);
+  /* ── KEYPOINT ── */
+  .keypoint-box {
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.125rem;
-    margin-bottom: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    cursor: pointer;
+    transition: background 0.15s;
     display: flex;
-    gap: 12px;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    background: var(--bg);
   }
+  .keypoint-box:hover { background: var(--accent-light); border-color: var(--accent); }
 
-  .speaker {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
+  .keypoint-inner { flex: 1; }
+
+  .keypoint-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
     color: var(--accent);
-    letter-spacing: 0.1em;
-    min-width: 36px;
-    padding-top: 3px;
-    flex-shrink: 0;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--accent);
+    display: inline-block;
+    padding-bottom: 4px;
   }
 
-  .speaker.ken { color: var(--blue); }
-
-  .dialogue-lines { flex: 1; }
-
-  .en-line {
-    font-size: 18px;
-    font-weight: 500;
+  .keypoint-en {
+    font-size: 24px;
+    font-weight: 400;
     color: var(--text);
-    line-height: 1.6;
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
   }
 
-  .ko-line {
-    font-size: 15px;
-    color: var(--text-sub);
-    line-height: 1.5;
-  }
-
-  /* TTS */
-  .dialogue-card {
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .dialogue-card:active { background: var(--surface2); }
-  .dialogue-card.playing {
-    border-color: var(--accent-dim);
-    background: rgba(200,240,128,0.05);
-  }
-
-  .tts-btn {
-    flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--tag);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .keypoint-ko {
     font-size: 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-    margin-top: 1px;
+    color: var(--text-sub);
+    font-family: 'Gowun Dodum', sans-serif;
   }
 
-  .tts-btn.playing {
-    background: var(--accent);
-    border-color: var(--accent);
-    animation: pulse 1s ease-in-out infinite;
+  .keypoint-play {
+    font-size: 14px;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    padding: 4px 8px;
+    border: 1px solid var(--accent);
   }
 
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.12); opacity: 0.8; }
-  }
-
+  /* ── TTS SPEED ── */
   .tts-controls {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
   }
 
   .tts-speed-label {
-    font-family: 'DM Mono', monospace;
     font-size: 11px;
-    color: var(--text-muted);
-    white-space: nowrap;
+    letter-spacing: 0.1em;
+    color: var(--text-sub);
+    margin-right: 8px;
+    text-transform: uppercase;
   }
 
   .tts-speed-btn {
-    padding: 3px 9px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--tag);
+    padding: 6px 12px;
+    border: 1px solid var(--border-light);
+    background: var(--bg);
     font-family: 'DM Mono', monospace;
     font-size: 12px;
-    color: var(--text-muted);
+    color: var(--text-sub);
     cursor: pointer;
     transition: all 0.15s;
   }
 
   .tts-speed-btn.active {
-    background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
   }
 
-  .keypoint-box { cursor: pointer; transition: border-color 0.15s; }
-  .keypoint-box:active { border-color: var(--accent); }
-
-  /* KEY POINT */
-  .keypoint-box {
-    background: var(--surface);
-    border: 1px solid var(--accent-dim);
-    border-radius: 12px;
-    padding: 1.125rem;
-    margin-bottom: 10px;
+  /* ── DIALOGUE ── */
+  .dialogue-intro {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-family: 'Gowun Dodum', sans-serif;
   }
 
-  .keypoint-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
+  .dialogue-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.15s;
+    margin: 0 -1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .dialogue-card:hover { background: var(--accent-light); }
+  .dialogue-card.playing { background: var(--accent); color: var(--bg); }
+  .dialogue-card.playing .en-line, 
+  .dialogue-card.playing .ko-line, 
+  .dialogue-card.playing .speaker { color: var(--bg); }
+  .dialogue-card.playing .tts-btn { border-color: var(--bg); color: var(--bg); }
+
+  .speaker-col { min-width: 45px; flex-shrink: 0; padding-top: 2px; }
+
+  .speaker {
+    font-size: 11px;
+    letter-spacing: 0.05em;
     color: var(--accent);
-    letter-spacing: 0.15em;
-    margin-bottom: 8px;
+    text-transform: uppercase;
   }
 
-  .keypoint-en {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 4px;
+  .speaker.ken { color: var(--text-muted); }
+
+  .dialogue-lines { flex: 1; }
+
+  .en-line {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  .en-line strong {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+
+  .ko-line {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+    margin-top: 8px;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+
+  .tts-btn {
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-light);
+    color: var(--text-sub);
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  /* ── VOCAB ── */
+  .vocab-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .vocab-row:first-child { border-top: 1px solid var(--border); }
+
+  .vocab-word {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--accent);
     letter-spacing: -0.02em;
   }
 
-  .keypoint-ko {
-    font-size: 16px;
-    color: var(--text-sub);
-  }
-
-  /* VOCAB */
-  .vocab-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.125rem;
-    margin-bottom: 10px;
-  }
-
-  .vocab-word {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--accent);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 4px;
-  }
-
   .vocab-ko {
-    font-size: 15px;
-    color: var(--text-sub);
+    font-size: 14px;
+    color: var(--text);
+    font-family: 'Gowun Dodum', sans-serif;
     margin-bottom: 8px;
   }
 
   .vocab-example {
-    font-size: 14px;
-    color: var(--text-muted);
-    font-style: italic;
-    border-left: 2px solid var(--border);
-    padding-left: 10px;
+    font-size: 13px;
+    color: var(--text-sub);
     line-height: 1.6;
+    padding-left: 12px;
+    border-left: 1px solid var(--border-light);
   }
 
-  .vocab-example .ex-en { color: var(--text-sub); margin-bottom: 2px; }
-  .vocab-example .ex-ko { color: var(--text-muted); font-size: 13px; font-style: normal; }
+  .vocab-example .ex-ko {
+    font-family: 'Gowun Dodum', sans-serif;
+    margin-top: 4px;
+  }
 
-  /* QUIZ section */
-  .quiz-header {
+  /* ── QUIZ ── */
+  .quiz-meta {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  .quiz-counter {
-    font-family: 'DM Mono', monospace;
+    align-items: center;
+    margin-bottom: 12px;
     font-size: 12px;
-    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
-  .quiz-score {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--accent);
+  .quiz-bar-bg {
+    height: 1px;
+    background: var(--border-light);
+    margin-bottom: 2rem;
+    position: relative;
   }
 
-  .quiz-progress-bar-bg {
-    height: 3px;
-    background: var(--border);
-    border-radius: 99px;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-  }
-
-  .quiz-progress-bar {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 99px;
+  .quiz-bar {
+    position: absolute;
+    top: -1px; left: 0; height: 3px;
+    background: var(--text);
     transition: width 0.4s ease;
   }
 
-  .quiz-card {
-    background: var(--surface);
+  .quiz-prompt-box {
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    padding: 2.5rem 1.5rem;
+    margin-bottom: 16px;
     text-align: center;
-    min-height: 140px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    background: var(--bg);
   }
 
   .quiz-type-label {
-    font-family: 'DM Mono', monospace;
     font-size: 10px;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
-    letter-spacing: 0.15em;
-    margin-bottom: 12px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
   }
 
   .quiz-prompt {
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 18px;
     color: var(--text);
     line-height: 1.6;
-    letter-spacing: -0.01em;
+    font-family: 'Gowun Dodum', sans-serif;
   }
-
-  .quiz-prompt.korean { font-size: 19px; color: var(--text-sub); }
 
   .reveal-btn {
     width: 100%;
-    padding: 14px;
-    background: var(--tag);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-family: 'Pretendard', sans-serif;
-    font-size: 16px;
-    color: var(--text-muted);
+    padding: 16px;
+    border: 1px solid var(--text);
+    background: var(--text);
+    color: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.15s;
-    margin-bottom: 10px;
+    transition: all 0.2s;
+    margin-bottom: 16px;
   }
-
-  .reveal-btn:active { background: var(--surface2); }
+  .reveal-btn:hover { background: var(--bg); color: var(--text); }
 
   .answer-box {
     display: none;
-    background: var(--surface2);
-    border: 1px solid var(--accent-dim);
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 10px;
+    border: 1px solid var(--accent);
+    padding: 2rem 1.5rem;
+    margin-bottom: 16px;
     text-align: center;
+    background: var(--accent-light);
   }
-
   .answer-box.shown { display: block; }
 
   .answer-en {
-    font-size: 21px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 400;
     color: var(--accent);
-    line-height: 1.55;
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
+    line-height: 1.6;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
   }
 
-  .answer-ko {
-    font-size: 15px;
-    color: var(--text-sub);
+  .answer-speaker {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 
   .judge-btns {
     display: none;
-    gap: 10px;
-    margin-bottom: 1rem;
+    gap: 12px;
+    margin-bottom: 2rem;
   }
-
   .judge-btns.shown { display: flex; }
 
   .judge-btn {
     flex: 1;
-    padding: 13px;
+    padding: 16px;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    font-family: 'Pretendard', sans-serif;
-    font-size: 16px;
+    background: var(--bg);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s;
   }
 
-  .judge-btn.correct {
-    background: rgba(200, 240, 128, 0.1);
-    color: var(--accent);
-    border-color: var(--accent-dim);
-  }
+  .judge-btn:hover { background: var(--text); color: var(--bg); }
+  .judge-btn.wrong:hover { background: var(--red); border-color: var(--red); color: var(--bg); }
 
-  .judge-btn.wrong {
-    background: rgba(255, 107, 107, 0.1);
-    color: var(--red);
-    border-color: var(--red);
-  }
-
-  .judge-btn:active { opacity: 0.7; }
-
-  .quiz-result {
-    display: none;
-    text-align: center;
-    padding: 2rem 1rem;
-  }
-
+  /* ── RESULT ── */
+  .quiz-result { display: none; text-align: center; padding: 4rem 1rem; border: 1px solid var(--border); }
   .quiz-result.shown { display: block; }
 
-  .result-emoji { font-size: 48px; margin-bottom: 12px; }
-
   .result-score {
-    font-size: 32px;
-    font-weight: 600;
-    color: var(--accent);
-    font-family: 'DM Mono', monospace;
+    font-size: 64px;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    color: var(--text);
     margin-bottom: 8px;
+  }
+
+  .result-pct {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
   }
 
   .result-msg {
-    font-size: 16px;
+    font-size: 15px;
     color: var(--text-sub);
-    margin-bottom: 1.5rem;
     line-height: 1.6;
+    margin-bottom: 3rem;
+    font-family: 'Gowun Dodum', sans-serif;
   }
 
   .restart-btn {
-    padding: 12px 28px;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Pretendard', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-
-  .restart-btn:active { opacity: 0.8; }
-
-  /* NOW YOU TALK */
-  .nyt-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.125rem;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-
-  .nyt-num {
+    padding: 14px 32px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--text);
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
   }
+  .restart-btn:hover { background: var(--text); color: var(--bg); }
+
+  /* ── NOW YOU TALK ── */
+  .nyt-intro {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 1.5rem;
+    font-family: 'Gowun Dodum', sans-serif;
+    line-height: 1.6;
+  }
+
+  .nyt-card {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+  }
+  .nyt-card:first-of-type { border-top: 1px solid var(--border); }
+
+  .nyt-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+
+  .nyt-num { font-size: 11px; letter-spacing: 0.1em; color: var(--text-sub); }
+  .nyt-tap-hint { font-size: 10px; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase; }
 
   .nyt-ko {
     font-size: 18px;
-    font-weight: 500;
     color: var(--text);
     line-height: 1.6;
-    margin-bottom: 4px;
+    font-family: 'Gowun Dodum', sans-serif;
+    margin-bottom: 8px;
   }
 
-  .nyt-hint {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-  }
+  .nyt-hint { font-size: 13px; color: var(--text-muted); }
 
   .nyt-answer {
     display: none;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
   }
-
   .nyt-answer.shown { display: block; }
 
   .nyt-answer-en {
-    font-size: 19px;
-    font-weight: 500;
-    color: var(--accent);
+    font-size: 18px;
+    font-weight: 400;
     line-height: 1.6;
-    margin-bottom: 4px;
+    letter-spacing: -0.01em;
   }
 
-  .nyt-tap-hint {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'DM Mono', monospace;
-    margin-top: 8px;
-    text-align: right;
-  }
-
-  /* Progress bar bottom */
-  .progress-wrap {
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: var(--bg);
     border-top: 1px solid var(--border);
-    padding: 0.75rem 1.25rem;
+    padding: 0 1.5rem;
+    height: 56px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 20px;
     z-index: 100;
   }
 
-  .progress-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--text-muted);
+  .bottom-label {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text);
     white-space: nowrap;
+    text-transform: uppercase;
+    min-width: 50px;
   }
 
-  .progress-bar-bg {
+  .bottom-bar-track {
     flex: 1;
-    height: 3px;
-    background: var(--border);
-    border-radius: 99px;
-    overflow: hidden;
+    height: 1px;
+    background: var(--border-light);
+    position: relative;
   }
 
-  .progress-bar {
-    height: 100%;
+  .bottom-bar-fill {
+    position: absolute;
+    top: -1px; left: 0; height: 3px;
     background: var(--accent);
-    border-radius: 99px;
     transition: width 0.3s ease;
   }
 
-  .mode-label {
-    font-family: 'DM Mono', monospace;
+  .bottom-tag {
     font-size: 11px;
-    color: var(--accent);
-    white-space: nowrap;
     letter-spacing: 0.05em;
+    color: var(--text-sub);
+    white-space: nowrap;
+    text-transform: uppercase;
   }
 
-  body { padding-bottom: 60px; }
-
-  @media (min-width: 600px) {
-    header { padding: 2rem 2rem 1.25rem; }
-    .tabs { padding: 0 2rem; }
-    main { padding: 1.5rem 2rem; }
-  }
+  body { padding-bottom: 70px; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-label">EBS 오디오 어학당</div>
-  <h1>
-    <span class="day">DAY 25 · Thursday</span>
-    Depends on my mood. <span>/ 그때그때 기분에 따라 달라요</span>
-  </h1>
+  <div class="header-eyebrow">EBS Audio Series</div>
+  <div class="header-main">
+    <span class="header-day">Day 25</span>
+    <h1>Depends on my mood. <br><em>그때그때 기분에 따라 달라요</em></h1>
+  </div>
 </header>
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('script')">📖 스크립트</button>
-    <button class="tab" onclick="switchTab('vocab')">📚 단어</button>
-    <button class="tab" onclick="switchTab('quiz')">🧠 퀴즈</button>
-    <button class="tab" onclick="switchTab('talk')">🗣️ 연습</button>
+    <button class="tab active" onclick="switchTab('script')">Script</button>
+    <button class="tab" onclick="switchTab('vocab')">Vocab</button>
+    <button class="tab" onclick="switchTab('quiz')">Quiz</button>
+    <button class="tab" onclick="switchTab('talk')">Practice</button>
   </div>
 </div>
 
 <main>
 
-  <!-- SCRIPT -->
   <div class="section visible" id="sec-script">
+
     <div class="keypoint-box" onclick="ttsSpeak('Depends on my mood.')">
-      <div class="keypoint-label">이것이 포인트! &nbsp;🔊 탭해서 듣기</div>
-      <div class="keypoint-en">Depends on my mood.</div>
-      <div class="keypoint-ko">그때그때 기분에 따라 달라요.</div>
+      <div class="keypoint-inner">
+        <div class="keypoint-label">Point</div>
+        <div class="keypoint-en">Depends on my mood.</div>
+        <div class="keypoint-ko">그때그때 기분에 따라 달라요.</div>
+      </div>
+      <div class="keypoint-play">PLAY</div>
     </div>
 
     <div class="tts-controls">
-      <span class="tts-speed-label">재생 속도</span>
-      <button class="tts-speed-btn" onclick="setSpeed(0.7, this)">0.7×</button>
-      <button class="tts-speed-btn active" onclick="setSpeed(1.0, this)">1.0×</button>
-      <button class="tts-speed-btn" onclick="setSpeed(1.2, this)">1.2×</button>
-      <span class="tts-speed-label" style="margin-left:auto;">🔊 탭해서 듣기</span>
+      <span class="tts-speed-label">Speed</span>
+      <button class="tts-speed-btn" onclick="setSpeed(0.7, this)">0.7x</button>
+      <button class="tts-speed-btn active" onclick="setSpeed(1.0, this)">1.0x</button>
+      <button class="tts-speed-btn" onclick="setSpeed(1.2, this)">1.2x</button>
     </div>
 
-    <div class="dialogue-intro" style="margin-top:10px;">
-      소설과 비소설 중 어느 것을 더 좋아하는지 이야기하는 대화예요.<br>
-      진하게 표시된 단어에 힘을 주어 약간 띄우듯 발음해 보세요.
-    </div>
+    <div class="dialogue-intro">밑줄 친 단어에 힘을 주어 약간 띄우듯 발음해 보세요. 카드를 탭하면 발음을 들을 수 있어요.</div>
 
     <div class="dialogue-card" onclick="ttsCard(0, 'Are you more into fiction or non-fiction?')">
-      <div class="speaker">SUJI</div>
+      <div class="speaker-col"><div class="speaker">Suji</div></div>
       <div class="dialogue-lines">
         <div class="en-line">Are you more into <strong>fiction</strong> or <strong>non-fiction</strong>?</div>
         <div class="ko-line">소설과 비소설 중에 뭘 더 좋아하세요?</div>
       </div>
-      <div class="tts-btn" id="tb-0">▶</div>
+      <div class="tts-btn" id="tb-0">PLAY</div>
     </div>
 
     <div class="dialogue-card" onclick="ttsCard(1, 'Depends on my mood. You?')">
-      <div class="speaker ken">KEN</div>
+      <div class="speaker-col"><div class="speaker ken">Ken</div></div>
       <div class="dialogue-lines">
-        <div class="en-line"><strong>Depends</strong> on my <strong>mood</strong>. <strong>You</strong>?</div>
+        <div class="en-line"><strong>Depends</strong> on my <strong>mood</strong>. You?</div>
         <div class="ko-line">그때그때 기분에 따라 달라요. 수지 씨는요?</div>
       </div>
-      <div class="tts-btn" id="tb-1">▶</div>
+      <div class="tts-btn" id="tb-1">PLAY</div>
     </div>
 
     <div class="dialogue-card" onclick="ttsCard(2, 'Mostly fiction. I love getting lost in stories.')">
-      <div class="speaker">SUJI</div>
+      <div class="speaker-col"><div class="speaker">Suji</div></div>
       <div class="dialogue-lines">
-        <div class="en-line"><strong>Mostly fiction</strong>. I <strong>love getting lost</strong> in <strong>stories</strong>.</div>
+        <div class="en-line"><strong>Mostly fiction</strong>. I <strong>love getting lost</strong> in stories.</div>
         <div class="ko-line">대개는 소설이요. 전 이야기 속에 푹 빠지는 것을 아주 좋아하거든요.</div>
       </div>
-      <div class="tts-btn" id="tb-2">▶</div>
+      <div class="tts-btn" id="tb-2">PLAY</div>
     </div>
 
     <div class="dialogue-card" onclick="ttsCard(3, 'I like biographies. Real lives are fascinating.')">
-      <div class="speaker ken">KEN</div>
+      <div class="speaker-col"><div class="speaker ken">Ken</div></div>
       <div class="dialogue-lines">
-        <div class="en-line">I like <strong>biographies</strong>. <strong>Real lives</strong> are <strong>fascinating</strong>.</div>
+        <div class="en-line">I like <strong>biographies</strong>. <strong>Real lives</strong> are fascinating.</div>
         <div class="ko-line">저는 전기들을 좋아해요. 실제 인생 이야기는 정말 대단하거든요.</div>
       </div>
-      <div class="tts-btn" id="tb-3">▶</div>
+      <div class="tts-btn" id="tb-3">PLAY</div>
     </div>
 
     <div class="dialogue-card" onclick="ttsCard(4, 'We should trade books sometime.')">
-      <div class="speaker">SUJI</div>
+      <div class="speaker-col"><div class="speaker">Suji</div></div>
       <div class="dialogue-lines">
         <div class="en-line">We should <strong>trade books</strong> sometime.</div>
         <div class="ko-line">우리 언젠가 책을 바꿔 읽어 봐요.</div>
       </div>
-      <div class="tts-btn" id="tb-4">▶</div>
+      <div class="tts-btn" id="tb-4">PLAY</div>
     </div>
+
   </div>
 
-  <!-- VOCAB -->
   <div class="section" id="sec-vocab">
     <div id="vocab-list"></div>
   </div>
 
-  <!-- QUIZ -->
   <div class="section" id="sec-quiz">
     <div id="quiz-area"></div>
   </div>
 
-  <!-- NOW YOU TALK -->
   <div class="section" id="sec-talk">
-    <div class="dialogue-intro">
-      한국어를 보고 영어로 말해보세요.<br>
-      카드를 탭하면 정답을 확인할 수 있어요.
-    </div>
+    <div class="nyt-intro">한국어를 보고 영어로 말해보세요. 카드를 탭하면 정답을 확인할 수 있어요.</div>
     <div id="talk-list"></div>
   </div>
 
 </main>
 
-<div class="progress-wrap">
-  <span class="progress-label" id="progress-label">퀴즈 준비</span>
-  <div class="progress-bar-bg">
-    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+<div class="bottom-bar">
+  <span class="bottom-label" id="bottom-label">Day 25</span>
+  <div class="bottom-bar-track">
+    <div class="bottom-bar-fill" id="bottom-fill" style="width:0%"></div>
   </div>
-  <span class="mode-label" id="mode-label">DAY 25</span>
+  <span class="bottom-tag" id="bottom-tag">Script</span>
 </div>
 
 <script>
-// ── TTS ENGINE ────────────────────────────────────────
+// ── TTS ───────────────────────────────────────────────
 let ttsSpeed = 1.0;
 let currentTtsIdx = null;
-let ttsUtterance = null;
 
 function setSpeed(rate, btn) {
   ttsSpeed = rate;
@@ -727,39 +702,36 @@ function setSpeed(rate, btn) {
 function clearTtsUI() {
   document.querySelectorAll('.dialogue-card').forEach(c => c.classList.remove('playing'));
   document.querySelectorAll('.tts-btn').forEach(b => {
-    b.classList.remove('playing');
-    b.textContent = '▶';
+    b.textContent = 'PLAY';
   });
   currentTtsIdx = null;
+}
+
+function makeUtterance(text) {
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = ttsSpeed;
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v =>
+    v.lang.startsWith('en') &&
+    (v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Karen') || v.name.includes('Google US'))
+  );
+  if (preferred) u.voice = preferred;
+  return u;
 }
 
 function ttsSpeak(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   clearTtsUI();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US';
-  u.rate = ttsSpeed;
-
-  // prefer a natural-sounding English voice if available
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Karen') || v.name.includes('Google US')));
-  if (preferred) u.voice = preferred;
-
-  window.speechSynthesis.speak(u);
+  window.speechSynthesis.speak(makeUtterance(text));
 }
 
 function ttsCard(idx, text) {
-  if (!window.speechSynthesis) {
-    alert('이 브라우저는 음성 재생을 지원하지 않아요.');
-    return;
-  }
-
+  if (!window.speechSynthesis) { alert('이 브라우저는 음성 재생을 지원하지 않아요.'); return; }
   const btn = document.getElementById('tb-' + idx);
-  const cards = document.querySelectorAll('.dialogue-card');
-  const card = cards[idx];
+  const card = document.querySelectorAll('.dialogue-card')[idx];
 
-  // if already playing this card, stop
   if (currentTtsIdx === idx) {
     window.speechSynthesis.cancel();
     clearTtsUI();
@@ -768,28 +740,16 @@ function ttsCard(idx, text) {
 
   window.speechSynthesis.cancel();
   clearTtsUI();
-
   currentTtsIdx = idx;
   card.classList.add('playing');
-  btn.classList.add('playing');
-  btn.textContent = '■';
+  btn.textContent = 'STOP';
 
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US';
-  u.rate = ttsSpeed;
-
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Karen') || v.name.includes('Google US')));
-  if (preferred) u.voice = preferred;
-
-  u.onend = () => { clearTtsUI(); };
-  u.onerror = () => { clearTtsUI(); };
-
-  ttsUtterance = u;
+  const u = makeUtterance(text);
+  u.onend = clearTtsUI;
+  u.onerror = clearTtsUI;
   window.speechSynthesis.speak(u);
 }
 
-// voices may load async on some browsers
 window.speechSynthesis.onvoiceschanged = () => {};
 
 // ── DATA ──────────────────────────────────────────────
@@ -819,52 +779,48 @@ const nowYouTalkData = [
   { num: 5, ko: '우리 언젠가 회포를 한번 풀어야지요.', hint: '(catch up, sometime)', en: 'We should catch up sometime.' },
 ];
 
-// quiz items = dialogue + vocab flashcard
-const quizItems = dialogue.map(d => ({ type: 'dialogue', ...d }));
+const quizItems = dialogue.map(d => ({ ...d }));
 
-// ── VOCAB RENDER ──────────────────────────────────────
+// ── VOCAB ─────────────────────────────────────────────
 const vocabList = document.getElementById('vocab-list');
 vocabData.forEach(v => {
-  const card = document.createElement('div');
-  card.className = 'vocab-card';
-  card.innerHTML = `
+  const row = document.createElement('div');
+  row.className = 'vocab-row';
+  row.innerHTML = `
     <div class="vocab-word">${v.word}</div>
     <div class="vocab-ko">${v.ko}</div>
-    ${v.exEn ? `<div class="vocab-example"><div class="ex-en">${v.exEn}</div><div class="ex-ko">${v.exKo}</div></div>` : ''}
+    ${v.exEn ? `<div class="vocab-example"><div>${v.exEn}</div><div class="ex-ko">${v.exKo}</div></div>` : ''}
   `;
-  vocabList.appendChild(card);
+  vocabList.appendChild(row);
 });
 
-// ── NOW YOU TALK RENDER ───────────────────────────────
+// ── PRACTICE ──────────────────────────────────────────
 const talkList = document.getElementById('talk-list');
 nowYouTalkData.forEach(item => {
   const card = document.createElement('div');
   card.className = 'nyt-card';
   card.innerHTML = `
-    <div class="nyt-num">${String(item.num).padStart(2,'0')} / ${String(nowYouTalkData.length).padStart(2,'0')}</div>
+    <div class="nyt-top">
+      <div class="nyt-num">NO.${String(item.num).padStart(2,'0')}</div>
+      <div class="nyt-tap-hint" id="nyt-hint-${item.num}">TAP TO REVEAL</div>
+    </div>
     <div class="nyt-ko">${item.ko}</div>
     <div class="nyt-hint">${item.hint}</div>
     <div class="nyt-answer" id="nyt-ans-${item.num}">
       <div class="nyt-answer-en">${item.en}</div>
     </div>
-    <div class="nyt-tap-hint">탭해서 정답 확인</div>
   `;
   card.addEventListener('click', () => {
     const ans = document.getElementById('nyt-ans-' + item.num);
-    const hint = card.querySelector('.nyt-tap-hint');
-    if (ans.classList.contains('shown')) {
-      ans.classList.remove('shown');
-      hint.textContent = '탭해서 정답 확인';
-    } else {
-      ans.classList.add('shown');
-      hint.textContent = '탭해서 접기';
-    }
+    const hint = document.getElementById('nyt-hint-' + item.num);
+    const shown = ans.classList.toggle('shown');
+    hint.textContent = shown ? 'CLOSE' : 'TAP TO REVEAL';
   });
   talkList.appendChild(card);
 });
 
-// ── QUIZ ENGINE ───────────────────────────────────────
-let quizState = { items: [], idx: 0, correct: 0, wrong: 0, revealed: false };
+// ── QUIZ ──────────────────────────────────────────────
+let quizState = { items: [], idx: 0, correct: 0, wrong: 0 };
 
 function shuffleArray(arr) {
   const a = [...arr];
@@ -876,54 +832,41 @@ function shuffleArray(arr) {
 }
 
 function startQuiz() {
-  quizState = {
-    items: shuffleArray(quizItems),
-    idx: 0,
-    correct: 0,
-    wrong: 0,
-    revealed: false
-  };
+  quizState = { items: shuffleArray(quizItems), idx: 0, correct: 0, wrong: 0 };
   renderQuiz();
-  updateProgress();
+  updateBottom();
 }
 
 function renderQuiz() {
   const area = document.getElementById('quiz-area');
   area.innerHTML = '';
-
-  if (quizState.idx >= quizState.items.length) {
-    renderResult(area);
-    return;
-  }
+  if (quizState.idx >= quizState.items.length) { renderResult(area); return; }
 
   const item = quizState.items[quizState.idx];
   const total = quizState.items.length;
   const current = quizState.idx + 1;
 
   area.innerHTML = `
-    <div class="quiz-header">
-      <span class="quiz-counter">${current} / ${total}</span>
-      <span class="quiz-score">✓ ${quizState.correct} &nbsp;✗ ${quizState.wrong}</span>
+    <div class="quiz-meta">
+      <span>Q.${current} / ${total}</span>
+      <span>${quizState.correct} O / ${quizState.wrong} X</span>
     </div>
-    <div class="quiz-progress-bar-bg">
-      <div class="quiz-progress-bar" style="width: ${((current-1)/total)*100}%"></div>
+    <div class="quiz-bar-bg"><div class="quiz-bar" style="width:${((current-1)/total)*100}%"></div></div>
+
+    <div class="quiz-prompt-box">
+      <div class="quiz-type-label">Translate into English</div>
+      <div class="quiz-prompt">${item.ko}</div>
     </div>
 
-    <div class="quiz-card">
-      <div class="quiz-type-label">한국어 → 영어로 말해보세요</div>
-      <div class="quiz-prompt korean">${item.speaker ? `[${item.speaker}] ` : ''}${item.ko}</div>
-    </div>
-
-    <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()">👁 정답 보기</button>
+    <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()">Show Answer</button>
 
     <div class="answer-box" id="answer-box">
       <div class="answer-en">${item.en}</div>
-      ${item.speaker ? `<div class="answer-ko" style="margin-top:4px; font-size:12px; color:var(--text-muted); font-family:'DM Mono',monospace;">${item.speaker.toUpperCase()}</div>` : ''}
     </div>
 
     <div class="judge-btns" id="judge-btns">
-      <button class="judge-btn correct" onclick="judge(true)">✓ 맞았어</button>
-      <button class="judge-btn wrong" onclick="judge(false)">✗ 틀렸어</button>
+      <button class="judge-btn correct" onclick="judge(true)">Correct</button>
+      <button class="judge-btn wrong" onclick="judge(false)">Wrong</button>
     </div>
   `;
 }
@@ -935,81 +878,64 @@ function revealAnswer() {
 }
 
 function judge(isCorrect) {
-  if (isCorrect) quizState.correct++;
-  else quizState.wrong++;
+  if (isCorrect) quizState.correct++; else quizState.wrong++;
   quizState.idx++;
   renderQuiz();
-  updateProgress();
+  updateBottom();
 }
 
 function renderResult(area) {
   const total = quizState.items.length;
   const pct = Math.round((quizState.correct / total) * 100);
-  let emoji = '😅', msg = '다시 한번 해봐요! 반복이 핵심이에요.';
-  if (pct >= 80) { emoji = '🎉'; msg = '훌륭해요! 오늘 배운 표현 완벽 마스터!'; }
-  else if (pct >= 50) { emoji = '💪'; msg = '절반 이상 맞혔어요. 조금만 더 연습해요!'; }
-
+  const msg = pct >= 80 ? 'Perfect!' : pct >= 50 ? 'Good Job!' : 'Try Again!';
   area.innerHTML = `
     <div class="quiz-result shown">
-      <div class="result-emoji">${emoji}</div>
-      <div class="result-score">${quizState.correct} / ${total}</div>
-      <div class="result-msg">${msg}<br><br>정확도 ${pct}%</div>
-      <button class="restart-btn" onclick="startQuiz()">다시 풀기</button>
+      <div class="result-score">${quizState.correct}/${total}</div>
+      <div class="result-pct">Accuracy ${pct}%</div>
+      <div class="result-msg">${msg}</div>
+      <button class="restart-btn" onclick="startQuiz()">Retry</button>
     </div>
   `;
-  updateProgress(pct);
+  updateBottom(pct);
 }
 
-function updateProgress(pct) {
-  const label = document.getElementById('progress-label');
-  const bar = document.getElementById('progress-bar');
-
-  if (currentTab === 'quiz') {
-    if (quizState.idx < quizState.items.length) {
-      const done = quizState.correct + quizState.wrong;
-      const total = quizState.items.length;
-      label.textContent = `${done} / ${total} 완료`;
-      bar.style.width = (done / total * 100) + '%';
-    } else {
-      const p = pct || Math.round((quizState.correct / quizState.items.length) * 100);
-      label.textContent = `정확도 ${p}%`;
-      bar.style.width = p + '%';
-    }
-  } else {
-    label.textContent = 'DAY 25';
-    bar.style.width = '0%';
-  }
-}
-
-// ── TAB SWITCH ────────────────────────────────────────
+// ── TAB + BOTTOM ──────────────────────────────────────
 let currentTab = 'script';
+const tabIds = ['script', 'vocab', 'quiz', 'talk'];
+const tabLabels = { script: 'Script', vocab: 'Vocab', quiz: 'Quiz', talk: 'Practice' };
 
 function switchTab(id) {
   currentTab = id;
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    const ids = ['script', 'vocab', 'quiz', 'talk'];
-    t.classList.toggle('active', ids[i] === id);
-  });
-  document.querySelectorAll('.section').forEach(s => {
-    s.classList.toggle('visible', s.id === 'sec-' + id);
-  });
-
-  if (id === 'quiz' && quizState.items.length === 0) {
-    startQuiz();
-  }
-
-  updateProgress();
-
-  document.getElementById('mode-label').textContent =
-    id === 'script' ? '📖 스크립트'
-    : id === 'vocab' ? '📚 단어'
-    : id === 'quiz'  ? '🧠 퀴즈'
-    : '🗣️ 연습';
-
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', tabIds[i] === id));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('visible', s.id === 'sec-' + id));
+  if (id === 'quiz' && quizState.items.length === 0) startQuiz();
+  updateBottom();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-updateProgress();
+function updateBottom(pct) {
+  const label = document.getElementById('bottom-label');
+  const fill = document.getElementById('bottom-fill');
+  const tag = document.getElementById('bottom-tag');
+  tag.textContent = tabLabels[currentTab];
+  if (currentTab === 'quiz') {
+    const done = quizState.correct + quizState.wrong;
+    const total = quizState.items.length || 1;
+    if (quizState.idx < quizState.items.length) {
+      label.textContent = `${done}/${total}`;
+      fill.style.width = (done / total * 100) + '%';
+    } else {
+      const p = pct ?? Math.round((quizState.correct / total) * 100);
+      label.textContent = `${p}%`;
+      fill.style.width = p + '%';
+    }
+  } else {
+    label.textContent = 'Day 25';
+    fill.style.width = '0%';
+  }
+}
+
+updateBottom();
 </script>
 </body>
 </html>
